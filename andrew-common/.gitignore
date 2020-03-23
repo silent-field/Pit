@@ -1,0 +1,12 @@
+*/target/
+*/*/target/
+.settings
+.classpath
+.project
+*.log   
+.idea
+*.iml
+/**/*.iml
+*.class
+.factorypath
+/**/.factorypath
