@@ -7,10 +7,10 @@ package com.pit.core.localcache;
  * @Date 2020-03-20
  */
 public interface ICacheLoadDataHandler<K, V> {
-	/**
-	 * 加载数据
-	 * @param key
-	 * @return
-	 */
-	V loadData(K key);
+    /**
+     * 加载数据
+     * @param key
+     * @return
+     */
+    V loadData(K key);
 }

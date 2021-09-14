@@ -106,18 +106,18 @@ public class PitThreadLocalHolder {
         return contextHolder.get().getRemark();
     }
 
-    public static void resetRemark() {
-        if (null == contextHolder.get()) {
-            initRunningAccount();
-        }
-        contextHolder.get().setRemark("");
-    }
-
     public static void setRemark(String remark) {
         if (null == contextHolder.get()) {
             initRunningAccount();
         }
         contextHolder.get().setRemark(remark);
+    }
+
+    public static void resetRemark() {
+        if (null == contextHolder.get()) {
+            initRunningAccount();
+        }
+        contextHolder.get().setRemark("");
     }
 
     public static void appendRemark(String remark) {

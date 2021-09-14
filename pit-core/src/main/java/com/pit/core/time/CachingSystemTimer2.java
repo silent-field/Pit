@@ -23,10 +23,10 @@ public class CachingSystemTimer2 {
     private static volatile int count = 0;
     private static volatile long old = 0L;
     private static volatile long now = 0L;
-    private static volatile String dateNow = null;
-    private static volatile String secondNow = null;
-    private static volatile String msNow = null;
-    private static volatile AtomicLong idx = new AtomicLong(0L);
+    private static String dateNow = null;
+    private static String secondNow = null;
+    private static String msNow = null;
+    private static AtomicLong idx = new AtomicLong(0L);
 
     public CachingSystemTimer2() {
     }

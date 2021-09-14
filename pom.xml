@@ -45,7 +45,7 @@
         <protobuf-java.version>3.12.0</protobuf-java.version>
         <protobuf-java-format.version>1.4</protobuf-java-format.version>
         <ohc-core.version>0.7.1</ohc-core.version>
-        <caffeine.version>3.0.4</caffeine.version>
+        <caffeine.version>2.8.5</caffeine.version>
         <okhttp.version>4.9.1</okhttp.version>
         <async-http-client.version>2.12.3</async-http-client.version>
         <oshi-core.version>5.8.2</oshi-core.version>

@@ -18,17 +18,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @date 2020/7/4.
  */
 public class NormalJedisPoolContainer implements JedisPoolContainer {
-    private String redisConnect;
-    private String password;
-    private GenericObjectPoolConfig jedisConfig;
-    private int timeout;
-
     /**
      * 需要reset计数器的值
      */
     private final static AtomicInteger addCounter = new AtomicInteger(0);
     private final static int INCR_UPPER_LIMIT = 1000000000;
-
+    private String redisConnect;
+    private String password;
+    private GenericObjectPoolConfig jedisConfig;
+    private int timeout;
     private boolean isInit = false;
 
     private List<JedisPool> jedisPoolList = new ArrayList<>();

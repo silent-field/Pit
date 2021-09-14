@@ -112,10 +112,6 @@ public class ResultVO<T> implements Serializable {
         }
     }
 
-    public void setResultCode(String resultCode) {
-        this.resultCode = resultCode;
-    }
-
     public void setResultCode(Class<? extends Object> thisClass, String resultCode) {
         if (BaseResultCodeConstants.CODE_SUCCESS.equals(resultCode)
                 || BaseResultCodeConstants.CODE_SUCCESS_AND_BREAK.equals(resultCode)) {
@@ -160,6 +156,10 @@ public class ResultVO<T> implements Serializable {
 
     public String getResultCode() {
         return resultCode;
+    }
+
+    public void setResultCode(String resultCode) {
+        this.resultCode = resultCode;
     }
 
     public String getResultMsg() {

@@ -10,56 +10,52 @@ import java.net.ServerSocket;
  */
 @Slf4j
 public class PortUtil {
-	private final static int PORT_INT_UPPER = 65535;
+    private final static int PORT_INT_UPPER = 65535;
 
-	/**
-	 * 找可用的端口
-	 *
-	 * @param defaultPort
-	 * @return
-	 */
-	public static int findAvailablePort(int defaultPort) {
-		int portTmp = defaultPort;
-		while (portTmp < PORT_INT_UPPER) {
-			if (!isPortUsed(portTmp)) {
-				return portTmp;
-			} else {
-				portTmp++;
-			}
-		}
-		portTmp = defaultPort--;
-		while (portTmp > 0) {
-			if (!isPortUsed(portTmp)) {
-				return portTmp;
-			} else {
-				portTmp--;
-			}
-		}
-		throw new RuntimeException("no available port.");
-	}
+    /**
+     * 找可用的端口
+     *
+     * @param defaultPort
+     * @return
+     */
+    public static int findAvailablePort(int defaultPort) throws IOException {
+        int portTmp = defaultPort;
+        while (portTmp < PORT_INT_UPPER) {
+            if (!isPortUsed(portTmp)) {
+                return portTmp;
+            } else {
+                portTmp++;
+            }
+        }
+        portTmp = defaultPort--;
+        while (portTmp > 0) {
+            if (!isPortUsed(portTmp)) {
+                return portTmp;
+            } else {
+                portTmp--;
+            }
+        }
+        throw new RuntimeException("no available port.");
+    }
 
-	/**
-	 * 检查端口是否可用
-	 *
-	 * @param port
-	 * @return
-	 */
-	public static boolean isPortUsed(int port) {
-		ServerSocket serverSocket = null;
-		try {
-			serverSocket = new ServerSocket(port);
-			return false;
-		} catch (IOException e) {
-			log.info("port[{}] is in use.", port);
-			return true;
-		} finally {
-			if (serverSocket != null) {
-				try {
-					serverSocket.close();
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			}
-		}
-	}
+    /**
+     * 检查端口是否可用
+     *
+     * @param port
+     * @return
+     */
+    public static boolean isPortUsed(int port) throws IOException {
+        ServerSocket serverSocket = null;
+        try {
+            serverSocket = new ServerSocket(port);
+            return false;
+        } catch (IOException e) {
+            log.info("port[{}] is in use.", port);
+            return true;
+        } finally {
+            if (serverSocket != null) {
+                serverSocket.close();
+            }
+        }
+    }
 }

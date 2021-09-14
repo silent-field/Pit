@@ -11,25 +11,25 @@ import org.apache.commons.lang3.StringUtils;
  * Protobuf 对象转 json 工具类
  */
 public class ProtobufJsonUtils {
-	private static final FormatFactory formatFactory = new FormatFactory();
+    private static final FormatFactory formatFactory = new FormatFactory();
 
-	private static final ProtobufFormatter formatter = formatFactory.createFormatter(FormatFactory.Formatter.JSON);
+    private static final ProtobufFormatter formatter = formatFactory.createFormatter(FormatFactory.Formatter.JSON);
 
-	static {
-		formatter.setDefaultCharset(Charsets.UTF_8);
-	}
+    static {
+        formatter.setDefaultCharset(Charsets.UTF_8);
+    }
 
-	private ProtobufJsonUtils() {
-	}
+    private ProtobufJsonUtils() {
+    }
 
-	public static ProtobufFormatter getJsonFormat() {
-		return formatter;
-	}
+    public static ProtobufFormatter getJsonFormat() {
+        return formatter;
+    }
 
-	public static String printToString(Message message) {
-		if (null == message) {
-			return StringUtils.EMPTY;
-		}
-		return formatter.printToString(message);
-	}
+    public static String printToString(Message message) {
+        if (null == message) {
+            return StringUtils.EMPTY;
+        }
+        return formatter.printToString(message);
+    }
 }

@@ -14,89 +14,86 @@ import org.asynchttpclient.Response;
  */
 public abstract class AsynHttpFutureCallback implements AsyncHandler<Response> {
 
-	private boolean isDone = false;
+    private final Response.ResponseBuilder builder = new Response.ResponseBuilder();
+    private boolean isDone = false;
+    private Response response;
+    private Throwable t;
 
-	private Response response;
+    public AsynHttpFutureCallback() {
+    }
 
-	private final Response.ResponseBuilder builder = new Response.ResponseBuilder();
+    @Override
+    public State onStatusReceived(HttpResponseStatus responseStatus) throws Exception {
+        builder.accumulate(responseStatus);
+        return State.CONTINUE;
+    }
 
-	private Throwable t;
+    @Override
+    public State onHeadersReceived(HttpHeaders headers) throws Exception {
+        builder.accumulate(headers);
+        return State.CONTINUE;
+    }
 
-	public AsynHttpFutureCallback() {
-	}
+    @Override
+    public State onBodyPartReceived(HttpResponseBodyPart bodyPart) throws Exception {
+        builder.accumulate(bodyPart);
+        return State.CONTINUE;
+    }
 
-	@Override
-	public State onStatusReceived(HttpResponseStatus responseStatus) throws Exception {
-		builder.accumulate(responseStatus);
-		return State.CONTINUE;
-	}
+    @Override
+    public Response onCompleted() throws Exception {
+        if (isDone) {
+            return this.response;
+        }
+        this.response = builder.build();
 
-	@Override
-	public State onHeadersReceived(HttpHeaders headers) throws Exception {
-		builder.accumulate(headers);
-		return State.CONTINUE;
-	}
+        try {
+            if (null != response) {
+                onSuccess(response);
+            } else {
+                onFail(t);
+            }
+        } finally {
+            onComplete(response, t);
+            isDone = true;
+        }
+        return response;
+    }
 
-	@Override
-	public State onBodyPartReceived(HttpResponseBodyPart bodyPart) throws Exception {
-		builder.accumulate(bodyPart);
-		return State.CONTINUE;
-	}
+    @Override
+    public void onThrowable(Throwable t) {
+        if (isDone) {
+            return;
+        }
+        try {
+            onFail(t);
+        } finally {
+            onComplete(response, null);
+            isDone = true;
+        }
+        this.t = t;
+    }
 
-	@Override
-	public Response onCompleted() throws Exception {
-		if (isDone) {
-			return this.response;
-		}
-		this.response = builder.build();
+    /**
+     * 完成时调用
+     *
+     * @param response
+     * @param t
+     */
+    protected abstract void onComplete(Response response, Throwable t);
 
-		try {
-			if (null != response) {
-				onSuccess(response);
-			} else {
-				onFail(t);
-			}
-		} finally {
-			onComplete(response, t);
-			isDone = true;
-		}
-		return response;
-	}
+    /**
+     * 失败时调用
+     *
+     * @param t
+     */
+    protected abstract void onFail(Throwable t);
 
-	@Override
-	public void onThrowable(Throwable t) {
-		if (isDone) {
-			return;
-		}
-		try {
-			onFail(t);
-		} finally {
-			onComplete(response, null);
-			isDone = true;
-		}
-		this.t = t;
-	}
-
-	/**
-	 * 完成时调用
-	 *
-	 * @param response
-	 * @param t
-	 */
-	protected abstract void onComplete(Response response, Throwable t);
-
-	/**
-	 * 失败时调用
-	 *
-	 * @param t
-	 */
-	protected abstract void onFail(Throwable t);
-
-	/**
-	 * 成功时调用
-	 *
-	 * @param response
-	 */
-	protected abstract void onSuccess(Response response);
+    /**
+     * 成功时调用
+     *
+     * @param response
+     */
+    protected abstract void onSuccess(Response response);
 
 }

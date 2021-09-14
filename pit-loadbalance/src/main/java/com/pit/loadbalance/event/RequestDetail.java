@@ -18,37 +18,37 @@ import java.util.Map;
 public class RequestDetail {
     private LoadBalanceRequestWrapper request;
 
-	private String currentHost;
+    private String currentHost;
 
-	private String serviceSymbol;
+    private String serviceSymbol;
 
-	private ServiceMetaInfo.NodeMetaInfo nodeMetaInfo;
+    private ServiceMetaInfo.NodeMetaInfo nodeMetaInfo;
 
-	private String url;
+    private String url;
 
-	private String jsonBody;
+    private String jsonBody;
 
-	private boolean businessAlarmSwitch;
+    private boolean businessAlarmSwitch;
 
-	private long slowThreshold;
+    private long slowThreshold;
 
-	private ILoadBalancer loadBalancer;
+    private ILoadBalancer loadBalancer;
 
-	@Data
-	public static class LoadBalanceRequestWrapper {
-		/**
-		 * 请求路径
-		 */
-		private String path;
+    @Data
+    public static class LoadBalanceRequestWrapper {
+        /**
+         * 请求路径
+         */
+        private String path;
 
-		/**
-		 * 请求参数集
-		 */
-		private JsonObject params;
+        /**
+         * 请求参数集
+         */
+        private JsonObject params;
 
-		/**
-		 * Http Header
-		 */
-		private Map<String, String> headers;
-	}
+        /**
+         * Http Header
+         */
+        private Map<String, String> headers;
+    }
 }

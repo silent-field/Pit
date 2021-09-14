@@ -20,70 +20,53 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @description:
  */
 public abstract class AbstractCallback<ResultType, ErrorType extends Throwable, IncomeType, OutputType> {
-    /**
-     * 是否组合
-     */
-    protected boolean isCombiner = false;
-
     protected final static int SUCCESS_CODE = 0;
-
     protected final static int ERROR_CODE = 1;
-
     protected final static int COMPLETE_CODE = 2;
-
-    protected volatile ServiceChain serviceChain;
-
-    protected volatile IncomeType income;
-
-    protected volatile ResultVO<OutputType> output;
-
-    protected volatile ICallbackSender sender;
-
-    /**
-     * 有没做过一次Complete method
-     */
-    protected volatile boolean isDualComplete = false;
-
-    /**
-     * 是否已经完成callback的内容
-     */
-    protected volatile boolean isDone = false;
-
-    /**
-     * 是否已经切换过线程,因为success或fail已经切换过线程的情况下，complete就没必要再切换一次
-     */
-    protected volatile boolean isSwitched = false;
-
-    /**
-     * 如果是fastReturn，则只要有一个callback回调就进行下一步操作，如果为false则全部callback回来再下一步操作
-     */
-    protected volatile boolean fastReturn = false;
-
-    /**
-     * 如果fastReturn模式，isDoneFirst表示是否已经有第一个callback已经完成了
-     */
-    protected AtomicBoolean isDoneFirst;
-
-    /**
-     * 切换的线程池
-     */
-    protected volatile Executor tpe;
-
-    /**
-     * 后备切换的线程池
-     */
-    protected volatile Executor tpeBak;
-
-    /**
-     * call back合并器
-     */
-    protected volatile CallbackCombiner<IncomeType, OutputType> combiner;
-
     /**
      * 防止后面步骤还没走完，ServiceChain和income还有output还没注入进来就跑掉了
      */
     protected final CountDownLatch latch = new CountDownLatch(1);
-
+    /**
+     * 是否组合
+     */
+    protected boolean isCombiner = false;
+    protected  ServiceChain serviceChain;
+    protected  IncomeType income;
+    protected  ResultVO<OutputType> output;
+    protected  ICallbackSender sender;
+    /**
+     * 有没做过一次Complete method
+     */
+    protected volatile boolean isDualComplete = false;
+    /**
+     * 是否已经完成callback的内容
+     */
+    protected volatile boolean isDone = false;
+    /**
+     * 是否已经切换过线程,因为success或fail已经切换过线程的情况下，complete就没必要再切换一次
+     */
+    protected volatile boolean isSwitched = false;
+    /**
+     * 如果是fastReturn，则只要有一个callback回调就进行下一步操作，如果为false则全部callback回来再下一步操作
+     */
+    protected volatile boolean fastReturn = false;
+    /**
+     * 如果fastReturn模式，isDoneFirst表示是否已经有第一个callback已经完成了
+     */
+    protected AtomicBoolean isDoneFirst;
+    /**
+     * 切换的线程池
+     */
+    protected  Executor tpe;
+    /**
+     * 后备切换的线程池
+     */
+    protected  Executor tpeBak;
+    /**
+     * call back合并器
+     */
+    protected  CallbackCombiner<IncomeType, OutputType> combiner;
     /**
      * 母线程ID，发送请求的线程ID
      */
@@ -178,13 +161,13 @@ public abstract class AbstractCallback<ResultType, ErrorType extends Throwable, 
 
         // 切换线程
         if (null == this.tpe || true == this.isSwitched) {
-            doit(result, e, type);
+            doIt(result, e, type);
         } else {
             try {
                 this.isSwitched = true;
                 this.tpe.execute(() -> {
                     PitThreadLocalHolder.setThreadHolder(threadHolder);
-                    doit(result, e, type);
+                    doIt(result, e, type);
                 });
             } catch (RejectedExecutionException r) {
                 // TODO 是否执行
@@ -222,7 +205,7 @@ public abstract class AbstractCallback<ResultType, ErrorType extends Throwable, 
      * @param e
      * @param type
      */
-    private void doit(ResultType result, ErrorType e, int type) {
+    private void doIt(ResultType result, ErrorType e, int type) {
         try {
             loopWaitChain();
             switch (type) {
@@ -300,12 +283,12 @@ public abstract class AbstractCallback<ResultType, ErrorType extends Throwable, 
         onDoIt(result, e, COMPLETE_CODE);
     }
 
-    public void setExecutor(Executor tpe) {
-        this.tpe = tpe;
-    }
-
     public Executor getExecutor() {
         return this.tpe;
+    }
+
+    public void setExecutor(Executor tpe) {
+        this.tpe = tpe;
     }
 
     /**
@@ -334,12 +317,12 @@ public abstract class AbstractCallback<ResultType, ErrorType extends Throwable, 
         return combiner;
     }
 
-    public void setCombiner(CallbackCombiner combiner) {
-        this.combiner = combiner;
-    }
-
     public boolean isCombiner() {
         return isCombiner;
+    }
+
+    public void setCombiner(CallbackCombiner combiner) {
+        this.combiner = combiner;
     }
 
 

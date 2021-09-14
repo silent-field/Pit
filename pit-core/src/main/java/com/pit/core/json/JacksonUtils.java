@@ -21,17 +21,18 @@ public class JacksonUtils {
 
     /** 默认 ObjectMapper */
     private static ObjectMapper defaultObjectMapper;
+
     static {
         ObjectMapper objectMapper = new ObjectMapper();
         // 忽略未知属性字段
         objectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         //大小写脱敏
-        objectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES,true);
+        objectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         //允许出现特殊字符和转义符
-        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true) ;
+        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
         //允许出现单引号
-        objectMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true) ;
+        objectMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
         //下划线转驼峰,有坑
 //        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
         // 当属性值为NULL时,不参与序列化
@@ -39,7 +40,7 @@ public class JacksonUtils {
         defaultObjectMapper = objectMapper;
     }
 
-    public ObjectMapper getDefaultObjectMapper(){
+    public ObjectMapper getDefaultObjectMapper() {
         return defaultObjectMapper;
     }
 
@@ -56,7 +57,7 @@ public class JacksonUtils {
         try {
             return defaultObjectMapper.readValue(json, valueType);
         } catch (Exception e) {
-            throw new RuntimeException("Unsupported transform! json:"+json+", class:"+valueType,e);
+            throw new RuntimeException("Unsupported transform! json:" + json + ", class:" + valueType, e);
         }
     }
 
@@ -69,21 +70,21 @@ public class JacksonUtils {
      * @param <E>
      * @return
      */
-    public static <T,E> T toObject(String json, Class<T> outClazzType,Class<E> innerClazzType) {
+    public static <T, E> T toObject(String json, Class<T> outClazzType, Class<E> innerClazzType) {
         try {
-            JavaType javaType = defaultObjectMapper.getTypeFactory().constructParametricType(outClazzType,innerClazzType);
+            JavaType javaType = defaultObjectMapper.getTypeFactory().constructParametricType(outClazzType, innerClazzType);
             return defaultObjectMapper.readValue(json, javaType);
         } catch (Exception e) {
-            throw new RuntimeException("Unsupported transform! json:"+json+", class:"+outClazzType,e);
+            throw new RuntimeException("Unsupported transform! json:" + json + ", class:" + outClazzType, e);
         }
     }
 
-    public static <T extends Map,E,F> T toMapObject(String json, Class<T> mapClassType, Class<E> keyClass, Class<F> valueClass){
+    public static <T extends Map, E, F> T toMapObject(String json, Class<T> mapClassType, Class<E> keyClass, Class<F> valueClass) {
         try {
-            JavaType javaType = defaultObjectMapper.getTypeFactory().constructMapType(mapClassType,keyClass,valueClass);
+            JavaType javaType = defaultObjectMapper.getTypeFactory().constructMapType(mapClassType, keyClass, valueClass);
             return defaultObjectMapper.readValue(json, javaType);
         } catch (Exception e) {
-            throw new RuntimeException("Unsupported transform! json:"+json+", class:"+mapClassType,e);
+            throw new RuntimeException("Unsupported transform! json:" + json + ", class:" + mapClassType, e);
         }
     }
 

@@ -14,8 +14,8 @@ import redis.clients.jedis.JedisPool;
 @NoArgsConstructor
 public class RedisEntry {
 
-	private String addr;
+    private String addr;
 
-	private JedisPool jedisPool;
+    private JedisPool jedisPool;
 
 }

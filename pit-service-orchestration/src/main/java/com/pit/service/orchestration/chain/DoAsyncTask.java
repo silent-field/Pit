@@ -10,33 +10,30 @@ import com.pit.service.orchestration.bean.ResultVO;
  */
 public class DoAsyncTask implements Runnable {
 
-	private ServiceChain sc;
+    /**
+     * 线程专用
+     */
+    protected PitThreadInfo threadInfo = new PitThreadInfo();
+    private ServiceChain sc;
+    private Object income;
+    private ResultVO output;
 
-	private Object income;
+    public DoAsyncTask(ServiceChain sc, Object income, ResultVO output) {
+        super();
+        this.sc = sc;
+        this.income = income;
+        this.output = output;
+        setThreadInfo(PitThreadLocalHolder.getThreadHolder());
+    }
 
-	private ResultVO output;
+    public void setThreadInfo(PitThreadInfo threadInfo) {
+        this.threadInfo.copy(threadInfo);
+    }
 
-	/**
-	 * 线程专用
-	 */
-	protected PitThreadInfo threadInfo = new PitThreadInfo();
-
-	public DoAsyncTask(ServiceChain sc, Object income, ResultVO output) {
-		super();
-		this.sc = sc;
-		this.income = income;
-		this.output = output;
-		setThreadInfo(PitThreadLocalHolder.getThreadHolder());
-	}
-
-	public void setThreadInfo(PitThreadInfo threadInfo) {
-		this.threadInfo.copy(threadInfo);
-	}
-
-	@Override
-	public void run() {
-		PitThreadLocalHolder.setThreadHolder(threadInfo);
-		sc.doTask(income, output);
-	}
+    @Override
+    public void run() {
+        PitThreadLocalHolder.setThreadHolder(threadInfo);
+        sc.doTask(income, output);
+    }
 
 }

@@ -11,46 +11,45 @@ import java.util.concurrent.TimeUnit;
  * @date 2020/3/20
  */
 public class CachingSystemTimer {
-	private final static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-	/**
-	 * 更新间隔
-	 */
-	private long interval;
+    private final static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    /**
+     * 时间
+     */
+    private static volatile long time = System.currentTimeMillis();
+    /**
+     * 更新间隔
+     */
+    private long interval;
 
-	/**
-	 * 时间
-	 */
-	private static volatile long time = System.currentTimeMillis();
+    public CachingSystemTimer() {
+        // 1s更新一次
+        this(1000);
+    }
 
-	public CachingSystemTimer() {
-		// 1s更新一次
-		this(1000);
-	}
+    public CachingSystemTimer(long interval) {
+        this.interval = interval;
+        init();
+    }
 
-	public CachingSystemTimer(long interval) {
-		this.interval = interval;
-		init();
-	}
+    public long getTime() {
+        return time;
+    }
 
-	private static class TimerFormatTicker implements Runnable {
-		@Override
-		public void run() {
-			time = System.currentTimeMillis();
-		}
-	}
+    private void init() {
+        time = System.currentTimeMillis();
+        executor.scheduleAtFixedRate(new TimerFormatTicker(), interval, interval, TimeUnit.MILLISECONDS);
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                executor.shutdown();
+            }
+        });
+    }
 
-	public long getTime() {
-		return time;
-	}
-
-	private void init() {
-		time = System.currentTimeMillis();
-		executor.scheduleAtFixedRate(new TimerFormatTicker(), interval, interval, TimeUnit.MILLISECONDS);
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				executor.shutdown();
-			}
-		});
-	}
+    private static class TimerFormatTicker implements Runnable {
+        @Override
+        public void run() {
+            time = System.currentTimeMillis();
+        }
+    }
 }

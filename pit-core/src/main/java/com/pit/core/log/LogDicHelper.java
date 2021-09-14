@@ -8,10 +8,10 @@ import java.util.Set;
  * @date 2020/9/12.
  */
 public interface LogDicHelper {
-	/**
-	 * 返回无需打印日志的关键字
-	 *
-	 * @return
-	 */
-	Set<String> notLogStartKeys();
+    /**
+     * 返回无需打印日志的关键字
+     *
+     * @return
+     */
+    Set<String> notLogStartKeys();
 }

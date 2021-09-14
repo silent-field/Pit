@@ -16,18 +16,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DoFinalTaskHandler extends AbstractTaskHandler<Object, Object> {
 
-	public static final String TYPE = "final";
+    public static final String TYPE = "final";
 
-	public DoFinalTaskHandler(IServiceLogService logService) {
-		super(null, logService, null, TYPE);
-	}
+    public DoFinalTaskHandler(IServiceLogService logService) {
+        super(null, logService, null, TYPE);
+    }
 
-	@Override
-	public AbstractCallback doTask(Object income, ResultVO<Object> output) throws Exception {
-		if (null != output.getScc()) {
-			output.getScc().onSuccess(null);
-		}
-		return null;
-	}
+    @Override
+    public AbstractCallback doTask(Object income, ResultVO<Object> output) throws Exception {
+        if (null != output.getScc()) {
+            output.getScc().onSuccess(null);
+        }
+        return null;
+    }
 
 }

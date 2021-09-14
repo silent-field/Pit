@@ -10,7 +10,7 @@ import lombok.Data;
  */
 @Data
 public class LoadBalanceConfig {
-	private String serviceMetaRefreshTime;
+    private String serviceMetaRefreshTime;
 
-	private String serviceMetaMaxsize;
+    private String serviceMetaMaxsize;
 }

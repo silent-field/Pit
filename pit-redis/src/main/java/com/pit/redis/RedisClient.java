@@ -19,15 +19,13 @@ import java.util.*;
  * @date 2020/7/7.
  */
 public class RedisClient {
+    private static final int RETRY_TIME = 3;
+    private static final int INCR_MAX = 10000;
     private JedisPoolContainer jedisPoolContainer;
 
     public RedisClient(JedisPoolContainer jedisPoolContainer) {
         this.jedisPoolContainer = jedisPoolContainer;
     }
-
-    private static final int RETRY_TIME = 3;
-
-    private static final int INCR_MAX = 10000;
 
     private <T> T exec(RetryExecutor<T, Jedis> executor) {
         return exec(executor, 1);

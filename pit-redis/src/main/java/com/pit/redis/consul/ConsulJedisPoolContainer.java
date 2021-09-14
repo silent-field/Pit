@@ -38,18 +38,7 @@ public class ConsulJedisPoolContainer implements JedisPoolContainer {
 
     private static volatile boolean isInit = false;
 
-    private static volatile List<RedisEntry> jedisPoolList = new LinkedList<>();
-
-    private String consulHosts;
-    private String consulRedisName;
-    private String password;
-    private int timeout;
-    private GenericObjectPoolConfig jedisPoolConfig;
-
-    private int errorMaxTimes = 3;
-    private int minIdle = 5;
-    private int consulRedisMaxSize = 10;
-
+    private static List<RedisEntry> jedisPoolList = new LinkedList<>();
     /**
      * Redis ip 实例错误计数器，10分钟刷新
      */
@@ -61,12 +50,19 @@ public class ConsulJedisPoolContainer implements JedisPoolContainer {
                     return new AtomicInteger(0);
                 }
             });
-
     /**
      * 1小时内被移除的Redis ip 实例
      */
     private static Cache<String, Boolean> removeAddr = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.HOURS)
             .maximumSize(100).concurrencyLevel(32).initialCapacity(8).build();
+    private String consulHosts;
+    private String consulRedisName;
+    private String password;
+    private int timeout;
+    private GenericObjectPoolConfig jedisPoolConfig;
+    private int errorMaxTimes = 3;
+    private int minIdle = 5;
+    private int consulRedisMaxSize = 10;
 
     public ConsulJedisPoolContainer(String consulHosts, String consulRedisName, String password, int timeout, GenericObjectPoolConfig jedisPoolConfig) {
         this.consulHosts = consulHosts;

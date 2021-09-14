@@ -7,10 +7,10 @@ package com.pit.core.graph.dag;
  * @description: DAG节点
  */
 public interface Node<K> {
-	/**
-	 * 节点标识
-	 *
-	 * @return
-	 */
-	K getNodeSign();
+    /**
+     * 节点标识
+     *
+     * @return
+     */
+    K getNodeSign();
 }

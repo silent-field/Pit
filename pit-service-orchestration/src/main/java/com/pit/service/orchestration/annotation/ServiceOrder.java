@@ -11,8 +11,8 @@ import java.lang.annotation.Target;
  * @date 2020/9/16.
  * @description:
  */
-@Target({ ElementType.TYPE })
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ServiceOrder {
-	int value() default 0;
+    int value() default 0;
 }

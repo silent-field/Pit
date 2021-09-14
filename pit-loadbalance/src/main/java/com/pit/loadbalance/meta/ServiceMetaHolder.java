@@ -24,74 +24,72 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public abstract class ServiceMetaHolder implements IServiceMetaHolder {
-	private PermanentCache<String, ServiceMetaInfo> serviceMetaInfoCache;
+    public static final Integer CLOSE_THREAD_POOL_WAIT_TIME = 3000;
+    private PermanentCache<String, ServiceMetaInfo> serviceMetaInfoCache;
+    private ExecutorService refreshPool = MoreExecutors.listeningDecorator(Executors
+            .newFixedThreadPool(Const.REFRESH_POOL_SIZE,
+                    new ThreadFactoryBuilder().setNameFormat("ServiceMetaRefresh").build()));
 
-	public static final Integer CLOSE_THREAD_POOL_WAIT_TIME = 3000;
+    public ServiceMetaHolder(LoadBalanceConfig config, CenterCacheLoadDataHandler centerCacheLoadDataHandler) {
+        // serviceMetaInfoCache
+        Integer serviceMetaRefreshTime = StringUtils.isNotBlank(config.getServiceMetaRefreshTime()) ?
+                Integer.valueOf(config.getServiceMetaRefreshTime()) :
+                Const.SERVICE_META_REFRESH_TIME;
+        Integer serviceMetaRefreshMaxsize = StringUtils.isNotBlank(config.getServiceMetaMaxsize()) ?
+                Integer.valueOf(config.getServiceMetaMaxsize()) :
+                Const.SERVICE_META_MAXSIZE;
 
-	private ExecutorService refreshPool = MoreExecutors.listeningDecorator(Executors
-			.newFixedThreadPool(Const.REFRESH_POOL_SIZE,
-					new ThreadFactoryBuilder().setNameFormat("ServiceMetaRefresh").build()));
+        GuavaCacheConfig guavaCacheConfig = GuavaCacheConfig.builder()
+                .refreshDuration(serviceMetaRefreshTime).refreshTimeUnit(TimeUnit.SECONDS)
+                .expireAfterWriteDuration(-1).maxSize(serviceMetaRefreshMaxsize)
+                .build();
 
-	public ServiceMetaHolder(LoadBalanceConfig config, CenterCacheLoadDataHandler centerCacheLoadDataHandler) {
-		// serviceMetaInfoCache
-		Integer serviceMetaRefreshTime = StringUtils.isNotBlank(config.getServiceMetaRefreshTime()) ?
-				Integer.valueOf(config.getServiceMetaRefreshTime()) :
-				Const.SERVICE_META_REFRESH_TIME;
-		Integer serviceMetaRefreshMaxsize = StringUtils.isNotBlank(config.getServiceMetaMaxsize()) ?
-				Integer.valueOf(config.getServiceMetaMaxsize()) :
-				Const.SERVICE_META_MAXSIZE;
+        serviceMetaInfoCache = new PermanentCache(guavaCacheConfig, refreshPool, centerCacheLoadDataHandler) {
+            @Override
+            protected String getName() {
+                return "ServiceMetaHolder";
+            }
+        };
+        // serviceMetaInfoCache end
+        log.info(StringUtils2
+                .format("initialize ServiceMetaHolder。refresh rate {} second，Maximum number of caches is {}",
+                        serviceMetaRefreshTime, serviceMetaRefreshMaxsize));
+    }
 
-		GuavaCacheConfig guavaCacheConfig = GuavaCacheConfig.builder()
-				.refreshDuration(serviceMetaRefreshTime).refreshTimeUnit(TimeUnit.SECONDS)
-				.expireAfterWriteDuration(-1).maxSize(serviceMetaRefreshMaxsize)
-				.build();
+    @Override
+    public void destroy() {
+        MoreExecutors
+                .shutdownAndAwaitTermination(refreshPool, CLOSE_THREAD_POOL_WAIT_TIME, TimeUnit.MILLISECONDS);
+    }
 
-		serviceMetaInfoCache = new PermanentCache(guavaCacheConfig, refreshPool, centerCacheLoadDataHandler) {
-			@Override
-			protected String getName() {
-				return "ServiceMetaHolder";
-			}
-		};
-		// serviceMetaInfoCache end
-		log.info(StringUtils2
-				.format("initialize ServiceMetaHolder。refresh rate {} second，Maximum number of caches is {}",
-						serviceMetaRefreshTime, serviceMetaRefreshMaxsize));
-	}
+    @Override
+    public ServiceMetaInfo getServiceMetaInfo(String symbol) {
+        try {
+            return serviceMetaInfoCache.get(symbol);
+        } catch (Exception e) {
+            log.error("exception occurs, ServiceMetaHolder.ServiceMetaInfoCache.getValue", e);
+        }
 
-	// ----------------------- Cache Load data handler，通过HTTP请求从Kong Agent查询同区集群信息
-	public abstract class CenterCacheLoadDataHandler implements ICacheDataLoader<String, ServiceMetaInfo> {
-		@Override
-		public ServiceMetaInfo loadData(String symbol) {
-			try {
-				ServiceMetaInfo latest = getServicesFromCenter(symbol);
-				log.info(StringUtils2
-						.format("query the latest cluster information，service symbol：{}，meta info：{}", symbol,
-								GsonUtils.toJson(latest)));
-				return latest;
-			} catch (Exception e) {
-				log.error("Unable to get the latest cluster information from Kong Agent，service symbol：" + symbol, e);
-			}
+        return new ServiceMetaInfo();
+    }
 
-			return new ServiceMetaInfo();
-		}
+    // ----------------------- Cache Load data handler，通过HTTP请求从Kong Agent查询同区集群信息
+    public abstract class CenterCacheLoadDataHandler implements ICacheDataLoader<String, ServiceMetaInfo> {
+        @Override
+        public ServiceMetaInfo loadData(String symbol) {
+            try {
+                ServiceMetaInfo latest = getServicesFromCenter(symbol);
+                log.info(StringUtils2
+                        .format("query the latest cluster information，service symbol：{}，meta info：{}", symbol,
+                                GsonUtils.toJson(latest)));
+                return latest;
+            } catch (Exception e) {
+                log.error("Unable to get the latest cluster information from Kong Agent，service symbol：" + symbol, e);
+            }
 
-		protected abstract ServiceMetaInfo getServicesFromCenter(String symbol) throws Exception;
-	}
+            return new ServiceMetaInfo();
+        }
 
-	@Override
-	public void destroy() {
-		MoreExecutors
-				.shutdownAndAwaitTermination(refreshPool, CLOSE_THREAD_POOL_WAIT_TIME, TimeUnit.MILLISECONDS);
-	}
-
-	@Override
-	public ServiceMetaInfo getServiceMetaInfo(String symbol) {
-		try {
-			return serviceMetaInfoCache.get(symbol);
-		} catch (Exception e) {
-			log.error("exception occurs, ServiceMetaHolder.ServiceMetaInfoCache.getValue", e);
-		}
-
-		return new ServiceMetaInfo();
-	}
+        protected abstract ServiceMetaInfo getServicesFromCenter(String symbol) throws Exception;
+    }
 }

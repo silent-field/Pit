@@ -9,15 +9,15 @@ import org.springframework.util.StringValueResolver;
  */
 @Component
 public class SpringPropertiesUtils implements EmbeddedValueResolverAware {
-	private static StringValueResolver valueResolver;
+    private static StringValueResolver valueResolver;
 
-	@Override
-	public void setEmbeddedValueResolver(StringValueResolver stringValueResolver) {
-		SpringPropertiesUtils.valueResolver = stringValueResolver;
-	}
+    public static String getPropertiesValue(String name) {
+        return valueResolver.resolveStringValue(name);
+    }
 
-	public static String getPropertiesValue(String name) {
-		return valueResolver.resolveStringValue(name);
-	}
+    @Override
+    public void setEmbeddedValueResolver(StringValueResolver stringValueResolver) {
+        SpringPropertiesUtils.valueResolver = stringValueResolver;
+    }
 
 }

@@ -9,9 +9,9 @@ import lombok.Data;
  */
 @Data
 public class RequestSuccessEvent {
-	private RequestDetail target;
+    private RequestDetail target;
 
-	public RequestSuccessEvent(RequestDetail target) {
-		this.target = target;
-	}
+    public RequestSuccessEvent(RequestDetail target) {
+        this.target = target;
+    }
 }

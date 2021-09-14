@@ -11,33 +11,6 @@ import com.pit.core.json.GsonUtils;
  */
 public interface ILogService {
     /**
-     * 请求开始日志
-     *
-     * @param obj
-     */
-    default void sendBeginRequestLog(Object obj) {
-        return;
-    }
-
-    /**
-     * 请求完成日志
-     *
-     * @param obj
-     */
-    default void sendEndRequestLog(Object obj) {
-        return;
-    }
-
-    /**
-     * 是否要记日志
-     *
-     * @return
-     */
-    default boolean isNeedLog() {
-        return false;
-    }
-
-    /**
      * 对象转字符串，使用 StringBuilder 提高性能，需要预估 StringBuilder 初始化长度
      *
      * @param msg
@@ -94,5 +67,32 @@ public interface ILogService {
      */
     static void append(StringBuilder builder, String title, String content, String end) {
         builder.append(title).append(content).append(end);
+    }
+
+    /**
+     * 请求开始日志
+     *
+     * @param obj
+     */
+    default void sendBeginRequestLog(Object obj) {
+        return;
+    }
+
+    /**
+     * 请求完成日志
+     *
+     * @param obj
+     */
+    default void sendEndRequestLog(Object obj) {
+        return;
+    }
+
+    /**
+     * 是否要记日志
+     *
+     * @return
+     */
+    default boolean isNeedLog() {
+        return false;
     }
 }

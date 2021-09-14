@@ -28,6 +28,28 @@ public class TcpUnpack {
         this.byteBuf = byteBuf;
     }
 
+    public static void main(String[] args) {
+        ByteBuf buf = Unpooled.buffer();
+        buf.writeLongLE(Long.MAX_VALUE + 10);
+
+        // 小端
+        byte[] bytes = new byte[8];
+        buf.readBytes(bytes);
+        for (int i = 0; i < 4; i++) {
+            byte head = bytes[i];
+            byte tail = bytes[8 - (i + 1)];
+
+            bytes[i] = tail;
+            bytes[8 - (i + 1)] = head;
+        }
+
+        BigInteger bigInteger = new BigInteger(1, bytes);
+
+        log.info(Long.MAX_VALUE + "");
+        log.info(bigInteger + "");
+        log.info(BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.TEN).toString());
+    }
+
     public ByteBuf data() {
         return byteBuf;
     }
@@ -130,27 +152,5 @@ public class TcpUnpack {
             map.put(getString(littleEndian), getString(littleEndian));
         }
         return map;
-    }
-
-    public static void main(String[] args) {
-        ByteBuf buf = Unpooled.buffer();
-        buf.writeLongLE(Long.MAX_VALUE + 10);
-
-        // 小端
-        byte[] bytes = new byte[8];
-        buf.readBytes(bytes);
-        for (int i = 0; i < 4; i++) {
-            byte head = bytes[i];
-            byte tail = bytes[8 - (i + 1)];
-
-            bytes[i] = tail;
-            bytes[8 - (i + 1)] = head;
-        }
-
-        BigInteger bigInteger = new BigInteger(1, bytes);
-
-        log.info(Long.MAX_VALUE + "");
-        log.info(bigInteger + "");
-        log.info(BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.TEN).toString());
     }
 }

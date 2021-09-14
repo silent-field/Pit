@@ -19,17 +19,14 @@ import java.util.Comparator;
  */
 @Slf4j
 public class BaseLoadBalancer implements ILoadBalancer {
+    private static final String DEFAULT_NAME = "LoadBalancer_default";
+    private static final String FORMAT = "LoadBalancer_{}";
     private final IRule defaultRule = new ConsistentHashRule(this);
     /**
      * 避免子类覆盖了构造函数
      */
     protected IRule rule = defaultRule;
-
-    private static final String DEFAULT_NAME = "LoadBalancer_default";
     protected String name = DEFAULT_NAME;
-
-    private static final String FORMAT = "LoadBalancer_{}";
-
     private ServiceMetaInfo serviceMetaInfo;
 
     public BaseLoadBalancer() {

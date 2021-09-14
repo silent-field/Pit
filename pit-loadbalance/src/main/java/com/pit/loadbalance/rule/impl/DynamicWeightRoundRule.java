@@ -29,6 +29,9 @@ import java.util.concurrent.TimeUnit;
  * 由于存在共享变量，在高并发的情况下不会非常精确
  */
 public class DynamicWeightRoundRule extends AbstractLoadBalancerRule {
+    private static List<ServerWeight> serverWeights = new ArrayList<>();
+    private static Map<String, FailCountLimit> failCountLimitMap = new HashMap<>();
+    private static Map<String, SuccessCountLimit> successCountLimitMap = new HashMap<>();
     /**
      * 上次选择的服务器
      */
@@ -49,22 +52,15 @@ public class DynamicWeightRoundRule extends AbstractLoadBalancerRule {
      * 服务器数
      */
     private int serverCount;
-
     private Object refreshLock = new Object();
-
     // --------- 动态调整权重
     private Integer initWeight = 100;
     private Integer failLimit = 10;
     private Integer period = 1000;
     private Integer degrade = 10;
-
     //
     private Integer successLimit = 10;
     private Integer upgrade = 10;
-
-    private static List<ServerWeight> serverWeights = new ArrayList<>();
-    private static Map<String, FailCountLimit> failCountLimitMap = new HashMap<>();
-    private static Map<String, SuccessCountLimit> successCountLimitMap = new HashMap<>();
 
     public DynamicWeightRoundRule(ILoadBalancer loadBalancer) {
         super(loadBalancer);
@@ -262,23 +258,18 @@ public class DynamicWeightRoundRule extends AbstractLoadBalancerRule {
      * 错误次数统计
      */
     public static class FailCountLimit {
+        private final Object lock = new Object();
         private long startPoint;
-
         private int count = 0;
-
         /**
          * 上限
          */
         private int limit;
-
         /**
          * 时间间隔
          */
         private long period;
-
         private boolean overNotify;
-
-        private final Object lock = new Object();
 
         /**
          * @param limit    限制次数
@@ -323,14 +314,12 @@ public class DynamicWeightRoundRule extends AbstractLoadBalancerRule {
      * 成功次数统计
      */
     public static class SuccessCountLimit {
+        private final Object lock = new Object();
         private int count = 0;
-
         /**
          * 上限
          */
         private int limit;
-
-        private final Object lock = new Object();
 
         /**
          * @param limit 限制次数

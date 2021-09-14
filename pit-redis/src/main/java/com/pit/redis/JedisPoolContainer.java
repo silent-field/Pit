@@ -9,17 +9,17 @@ import redis.clients.jedis.Jedis;
  * @date 2020/7/7.
  */
 public interface JedisPoolContainer {
-	/**
-	 * 获取一个Jedis实例
-	 *
-	 * @return
-	 */
-	Jedis getClient();
+    /**
+     * 获取一个Jedis实例
+     *
+     * @return
+     */
+    Jedis getClient();
 
-	/**
-	 * 调用失败触发
-	 *
-	 * @param jedis Jedis实例
-	 */
-	void executeError(Jedis jedis);
+    /**
+     * 调用失败触发
+     *
+     * @param jedis Jedis实例
+     */
+    void executeError(Jedis jedis);
 }

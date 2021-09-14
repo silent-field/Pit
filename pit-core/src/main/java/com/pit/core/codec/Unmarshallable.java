@@ -6,10 +6,10 @@ package com.pit.core.codec;
  * @date 2020/7/13.
  */
 public interface Unmarshallable {
-	/**
-	 * 反序列化
-	 *
-	 * @param unpack
-	 */
-	void unmarshal(TcpUnpack unpack);
+    /**
+     * 反序列化
+     *
+     * @param unpack
+     */
+    void unmarshal(TcpUnpack unpack);
 }

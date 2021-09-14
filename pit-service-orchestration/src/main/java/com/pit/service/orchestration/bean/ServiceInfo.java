@@ -15,31 +15,31 @@ import org.springframework.aop.support.AopUtils;
  */
 @Data
 public class ServiceInfo<I, R> {
-	private IService<I, R> service;
+    private IService<I, R> service;
 
-	private String simpleClassName;
+    private String simpleClassName;
 
-	private String className;
+    private String className;
 
-	private int order;
+    private int order;
 
-	private String errorCode = "";
+    private String errorCode = "";
 
-	public ServiceInfo(IService service) {
-		super();
-		this.service = service;
-		Class clazz = AopUtils.getTargetClass(service);
-		simpleClassName = clazz.getSimpleName();
-		className = clazz.getName();
-		try {
-			ServiceOrder order = (ServiceOrder) clazz.getAnnotation(ServiceOrder.class);
-			this.order = order.value();
-			ServiceErrorCode errorCode = (ServiceErrorCode) clazz.getAnnotation(ServiceErrorCode.class);
-			if (null != errorCode && StringUtils.isNotBlank(errorCode.value())) {
-				this.errorCode = errorCode.value();
-			}
-		} catch (Exception e) {
-			throw new RuntimeException(className + " error:", e);
-		}
-	}
+    public ServiceInfo(IService service) {
+        super();
+        this.service = service;
+        Class clazz = AopUtils.getTargetClass(service);
+        simpleClassName = clazz.getSimpleName();
+        className = clazz.getName();
+        try {
+            ServiceOrder order = (ServiceOrder) clazz.getAnnotation(ServiceOrder.class);
+            this.order = order.value();
+            ServiceErrorCode errorCode = (ServiceErrorCode) clazz.getAnnotation(ServiceErrorCode.class);
+            if (null != errorCode && StringUtils.isNotBlank(errorCode.value())) {
+                this.errorCode = errorCode.value();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(className + " error:", e);
+        }
+    }
 }

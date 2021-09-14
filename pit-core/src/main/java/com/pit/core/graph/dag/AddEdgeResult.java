@@ -9,34 +9,34 @@ import com.pit.core.dict.Dict;
  * @description:
  */
 public enum AddEdgeResult implements Dict<Integer, String> {
-	/**
-	 * 添加边成功
-	 */
-	SUCCESS(1, "添加边成功"),
-	/**
-	 * 添加边失败
-	 */
-	FAIL(-1, "添加边失败"),
-	/**
-	 * 添加边出现异常
-	 */
-	EXCEPTION(-2, "添加边出现异常");
+    /**
+     * 添加边成功
+     */
+    SUCCESS(1, "添加边成功"),
+    /**
+     * 添加边失败
+     */
+    FAIL(-1, "添加边失败"),
+    /**
+     * 添加边出现异常
+     */
+    EXCEPTION(-2, "添加边出现异常");
 
-	private int code;
-	private String desc;
+    private int code;
+    private String desc;
 
-	AddEdgeResult(int code, String desc) {
-		this.code = code;
-		this.desc = desc;
-	}
+    AddEdgeResult(int code, String desc) {
+        this.code = code;
+        this.desc = desc;
+    }
 
-	@Override
-	public Integer getCode() {
-		return code;
-	}
+    @Override
+    public Integer getCode() {
+        return code;
+    }
 
-	@Override
-	public String getDesc() {
-		return desc;
-	}
+    @Override
+    public String getDesc() {
+        return desc;
+    }
 }

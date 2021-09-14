@@ -7,10 +7,10 @@ package com.pit.redis.lock;
  * @author gy
  */
 public interface LockCallback<T> {
-	/**
-	 * 回调执行
-	 *
-	 * @return
-	 */
-	T exec();
+    /**
+     * 回调执行
+     *
+     * @return
+     */
+    T exec();
 }

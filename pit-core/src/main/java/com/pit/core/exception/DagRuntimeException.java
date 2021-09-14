@@ -7,11 +7,11 @@ package com.pit.core.exception;
  * @description:
  */
 public class DagRuntimeException extends CommonException {
-	public DagRuntimeException(int code, String str) {
-		super(code, str);
-	}
+    public DagRuntimeException(int code, String str) {
+        super(code, str);
+    }
 
-	public DagRuntimeException(ResultCodes.ResultCode resultCode) {
-		super(resultCode);
-	}
+    public DagRuntimeException(ResultCodes.ResultCode resultCode) {
+        super(resultCode);
+    }
 }

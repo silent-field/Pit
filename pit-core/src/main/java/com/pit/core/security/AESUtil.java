@@ -19,7 +19,8 @@ import java.security.SecureRandom;
  */
 public class AESUtil {
     private static final String AES_ALG = "AES";
-    private static final String AES_CBC_ALG = "AES/CBC/PKCS5Padding";
+    //    private static final String AES_CBC_ALG = "AES/CBC/PKCS5Padding";
+    private static final String AES_CBC_ALG = "AES/GCM/NoPadding";
 
     private static final int DEFAULT_AES_KEYSIZE = 128;
     private static final int DEFAULT_IVSIZE = 16;

@@ -32,19 +32,19 @@ public class DAG<N extends Node, E extends Edge> {
     /**
      * 节点集合，每个节点包含各自的节点标识 {@linkplain Node#getNodeSign()}
      */
-    private volatile Set<N> nodes;
+    private Set<N> nodes;
 
     /**
      * key是dag图中一个节点，value是key的<目标节点-出边>键值对。
      * 如节点A -> 节点B，边是E1，那么有Entry<A,Entry<B,E1>
      */
-    private volatile Map<N, Map<N, E>> edgesMap;
+    private Map<N, Map<N, E>> edgesMap;
 
     /**
      * key是dag图中一个节点，value是key的<源节点-入边>键值对。
      * 如节点A -> 节点B，边是E1，那么有Entry<B,Entry<A,E1>
      */
-    private volatile Map<N, Map<N, E>> reverseEdgesMap;
+    private Map<N, Map<N, E>> reverseEdgesMap;
 
     public DAG() {
         nodes = new HashSet<>();

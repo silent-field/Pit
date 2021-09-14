@@ -16,65 +16,65 @@ import com.google.common.io.BaseEncoding;
  */
 public class EncodeUtil {
 
-	/**
-	 * 将16进制的byte[]编码为String
-	 *
-	 * @param input
-	 * @return
-	 */
-	public static String encodeHex(byte[] input) {
-		return BaseEncoding.base16().encode(input);
-	}
+    /**
+     * 将16进制的byte[]编码为String
+     *
+     * @param input
+     * @return
+     */
+    public static String encodeHex(byte[] input) {
+        return BaseEncoding.base16().encode(input);
+    }
 
-	/**
-	 * 将String解码为16进制的byte[]
-	 *
-	 * @param input
-	 * @return
-	 */
-	public static byte[] decodeHex(CharSequence input) {
-		return BaseEncoding.base16().decode(input);
-	}
+    /**
+     * 将String解码为16进制的byte[]
+     *
+     * @param input
+     * @return
+     */
+    public static byte[] decodeHex(CharSequence input) {
+        return BaseEncoding.base16().decode(input);
+    }
 
-	/**
-	 * 将base64编码的byte[]编码为String
-	 *
-	 * @param input
-	 * @return
-	 */
-	public static String encodeBase64(byte[] input) {
-		return BaseEncoding.base64().encode(input);
-	}
+    /**
+     * 将base64编码的byte[]编码为String
+     *
+     * @param input
+     * @return
+     */
+    public static String encodeBase64(byte[] input) {
+        return BaseEncoding.base64().encode(input);
+    }
 
-	/**
-	 * 将String解码为base64的byte[]
-	 *
-	 * @param input
-	 * @return
-	 */
-	public static byte[] decodeBase64(CharSequence input) {
-		return BaseEncoding.base64().decode(input);
-	}
+    /**
+     * 将String解码为base64的byte[]
+     *
+     * @param input
+     * @return
+     */
+    public static byte[] decodeBase64(CharSequence input) {
+        return BaseEncoding.base64().decode(input);
+    }
 
-	/**
-	 * 将base64编码的byte[] url编码为String
-	 * Base64中的URL非法字符'+'和'/'会被转为'-'和'_', 见RFC3548
-	 *
-	 * @param input
-	 * @return
-	 */
-	public static String encodeBase64Url(byte[] input) {
-		return BaseEncoding.base64Url().encode(input);
-	}
+    /**
+     * 将base64编码的byte[] url编码为String
+     * Base64中的URL非法字符'+'和'/'会被转为'-'和'_', 见RFC3548
+     *
+     * @param input
+     * @return
+     */
+    public static String encodeBase64Url(byte[] input) {
+        return BaseEncoding.base64Url().encode(input);
+    }
 
-	/**
-	 * 将String url解码为base64的byte[]
-	 * 需要将Base64中的URL非法字符'+'和'/'转为'-'和'_', 见RFC3548
-	 *
-	 * @param input
-	 * @return
-	 */
-	public static byte[] decodeBase64Url(CharSequence input) {
-		return BaseEncoding.base64Url().decode(input);
-	}
+    /**
+     * 将String url解码为base64的byte[]
+     * 需要将Base64中的URL非法字符'+'和'/'转为'-'和'_', 见RFC3548
+     *
+     * @param input
+     * @return
+     */
+    public static byte[] decodeBase64Url(CharSequence input) {
+        return BaseEncoding.base64Url().decode(input);
+    }
 }

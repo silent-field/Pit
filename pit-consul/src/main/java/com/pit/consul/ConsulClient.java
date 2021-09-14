@@ -23,68 +23,66 @@ import java.util.Set;
 @Slf4j
 public class ConsulClient {
 
-	private static ConsulClient consulClient = new ConsulClient();
+    private final static int minIdle = 2;
+    private static ConsulClient consulClient = new ConsulClient();
+    private static Consul consul;
 
-	private static Consul consul;
+    private ConsulClient() {
+        super();
+    }
 
-	private final static int minIdle = 2;
+    public static ConsulClient instance(String consulAddress) {
+        if (null == consul) {
+            consulClient.init(consulAddress);
+        }
 
-	private ConsulClient() {
-		super();
-	}
+        return consulClient;
+    }
 
-	public static ConsulClient instance(String consulAddress) {
-		if (null == consul) {
-			consulClient.init(consulAddress);
-		}
+    private synchronized void init(String consulAddress) {
+        if (null != consul) {
+            return;
+        }
+        try {
+            Builder builder = Consul.builder();
+            String[] consulAddrArr = consulAddress.split(",");
+            for (String consulAddr : consulAddrArr) {
+                builder.withHostAndPort(HostAndPort.fromString(consulAddr));
+            }
+            consul = builder.withPing(false).build();
+        } catch (Exception e) {
+            log.error("ConsulClient init error:", e);
+        }
+    }
 
-		return consulClient;
-	}
+    /**
+     * 服务获取
+     */
+    public Set<String> serviceGet(String name) {
+        HealthClient client = consul.healthClient();
 
-	private synchronized void init(String consulAddress) {
-		if (null != consul) {
-			return;
-		}
-		try {
-			Builder builder = Consul.builder();
-			String[] consulAddrArr = consulAddress.split(",");
-			for (String consulAddr : consulAddrArr) {
-				builder.withHostAndPort(HostAndPort.fromString(consulAddr));
-			}
-			consul = builder.withPing(false).build();
-		} catch (Exception e) {
-			log.error("ConsulClient init error:", e);
-		}
-	}
+        Set<String> result = new HashSet<String>();
+        // 获取所有正常的服务（健康检测通过的）
+        List<ServiceHealth> responses = client.getHealthyServiceInstances(name).getResponse();
+        for (ServiceHealth sh : responses) {
+            Service service = sh.getService();
+            String ip = service.getAddress();
+            if (StringUtils.isBlank(ip)) {
+                continue;
+            }
+            int port = service.getPort();
+            String server = ip + ":" + port;
+            log.debug("consul get {}", server);
+            result.add(server);
+        }
 
-	/**
-	 * 服务获取
-	 */
-	public Set<String> serviceGet(String name) {
-		HealthClient client = consul.healthClient();
+        Set<String> resultTmp = new HashSet<>(result.size());
+        resultTmp.addAll(result);
 
-		Set<String> result = new HashSet<String>();
-		// 获取所有正常的服务（健康检测通过的）
-		List<ServiceHealth> responses = client.getHealthyServiceInstances(name).getResponse();
-		for (ServiceHealth sh : responses) {
-			Service service = sh.getService();
-			String ip = service.getAddress();
-			if (StringUtils.isBlank(ip)) {
-				continue;
-			}
-			int port = service.getPort();
-			String server = ip + ":" + port;
-			log.debug("consul get {}", server);
-			result.add(server);
-		}
+        if (resultTmp.size() > minIdle) {
+            return resultTmp;
+        }
 
-		Set<String> resultTmp = new HashSet<>(result.size());
-		resultTmp.addAll(result);
-
-		if (resultTmp.size() > minIdle) {
-			return resultTmp;
-		}
-
-		return result;
-	}
+        return result;
+    }
 }

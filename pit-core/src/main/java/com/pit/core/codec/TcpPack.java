@@ -20,10 +20,10 @@ import java.util.Map;
  */
 @Slf4j
 public class TcpPack {
-    private ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer();
     private static final int MAX_UNSIGNED_SHORT = 0xFFFF;
     private static final long MAX_UNSIGNED_INT = 0xFFFFFFFFL;
     private static final BigInteger MAX_UNSIGNED_LONG = BigInteger.valueOf(Long.MAX_VALUE).shiftLeft(1).add(BigInteger.ONE);
+    private ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer();
 
     public ByteBuf data() {
         return byteBuf;

@@ -56,10 +56,6 @@ public enum DataUnit {
         this.size = size;
     }
 
-    DataSize size() {
-        return this.size;
-    }
-
     /**
      * 通过后缀返回对应的 {@link DataUnit}
      *
@@ -75,6 +71,10 @@ public enum DataUnit {
             }
         }
         throw new IllegalArgumentException("Unknown data unit suffix '" + suffix + "'");
+    }
+
+    DataSize size() {
+        return this.size;
     }
 
 }

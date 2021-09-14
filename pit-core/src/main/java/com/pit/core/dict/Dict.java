@@ -6,17 +6,17 @@ package com.pit.core.dict;
  * 字典类接口
  */
 public interface Dict<C, D> {
-	/**
-	 * 标识
-	 *
-	 * @return
-	 */
-	C getCode();
+    /**
+     * 标识
+     *
+     * @return
+     */
+    C getCode();
 
-	/**
-	 * 描述
-	 *
-	 * @return
-	 */
-	D getDesc();
+    /**
+     * 描述
+     *
+     * @return
+     */
+    D getDesc();
 }

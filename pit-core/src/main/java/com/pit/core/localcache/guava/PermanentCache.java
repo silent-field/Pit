@@ -16,31 +16,31 @@ import java.util.concurrent.Executors;
  */
 @Slf4j
 public abstract class PermanentCache<K, V> extends BaseGuavaCache<K, V> {
-	private ICacheDataLoader<K, V> loadDataHandler;
+    private ICacheDataLoader<K, V> loadDataHandler;
 
-	public PermanentCache(GuavaCacheConfig cacheBuilderConfig, ICacheDataLoader<K, V> loadDataHandler) {
-		this(cacheBuilderConfig, MoreExecutors
-						.listeningDecorator(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())),
-				loadDataHandler);
-	}
+    public PermanentCache(GuavaCacheConfig cacheBuilderConfig, ICacheDataLoader<K, V> loadDataHandler) {
+        this(cacheBuilderConfig, MoreExecutors
+                        .listeningDecorator(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())),
+                loadDataHandler);
+    }
 
-	public PermanentCache(GuavaCacheConfig cacheBuilderConfig, ExecutorService refreshPool,
-						  ICacheDataLoader<K, V> loadDataHandler) {
-		super(cacheBuilderConfig, refreshPool, loadDataHandler);
-		this.loadDataHandler = loadDataHandler;
-		Validate.isTrue(null != loadDataHandler, "loadDataHandler is null");
-	}
+    public PermanentCache(GuavaCacheConfig cacheBuilderConfig, ExecutorService refreshPool,
+                          ICacheDataLoader<K, V> loadDataHandler) {
+        super(cacheBuilderConfig, refreshPool, loadDataHandler);
+        this.loadDataHandler = loadDataHandler;
+        Validate.isTrue(null != loadDataHandler, "loadDataHandler is null");
+    }
 
-	/**
-	 * 检查配置项
-	 */
-	private void checkAndSetConfig() {
-		Validate.notNull(cacheBuilderConfig, "cacheBuilderConfig is null");
-		Validate.notNull(cacheBuilderConfig.getRefreshDuration(), "cacheBuilderConfig.refreshDuration is null");
-		Validate.isTrue(Long.valueOf(0).compareTo(cacheBuilderConfig.getRefreshDuration()) > 0, "cacheBuilderConfig.refreshDuration is invalid, must > 0");
-		Validate.notNull(cacheBuilderConfig.getRefreshTimeUnit(), "cacheBuilderConfig.refreshTimeunit is null");
-		Validate.notNull(cacheBuilderConfig.getMaxSize(), "cacheBuilderConfig.maxsize is null");
-		Validate.isTrue(Long.valueOf(0).compareTo(cacheBuilderConfig.getMaxSize()) > 0,
-				"cacheBuilderConfig.maxsize is invalid, must > 0");
-	}
+    /**
+     * 检查配置项
+     */
+    private void checkAndSetConfig() {
+        Validate.notNull(cacheBuilderConfig, "cacheBuilderConfig is null");
+        Validate.notNull(cacheBuilderConfig.getRefreshDuration(), "cacheBuilderConfig.refreshDuration is null");
+        Validate.isTrue(Long.valueOf(0).compareTo(cacheBuilderConfig.getRefreshDuration()) > 0, "cacheBuilderConfig.refreshDuration is invalid, must > 0");
+        Validate.notNull(cacheBuilderConfig.getRefreshTimeUnit(), "cacheBuilderConfig.refreshTimeunit is null");
+        Validate.notNull(cacheBuilderConfig.getMaxSize(), "cacheBuilderConfig.maxsize is null");
+        Validate.isTrue(Long.valueOf(0).compareTo(cacheBuilderConfig.getMaxSize()) > 0,
+                "cacheBuilderConfig.maxsize is invalid, must > 0");
+    }
 }

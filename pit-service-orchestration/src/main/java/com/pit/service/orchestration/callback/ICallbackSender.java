@@ -7,12 +7,12 @@ import com.pit.service.orchestration.AbstractCallback;
  */
 public interface ICallbackSender<T extends AbstractCallback> {
 
-	/**
-	 * 传递CallBack
-	 *
-	 * @param callback
-	 * @return true send成功，false send失败
-	 */
-	boolean doSend(T callback);
+    /**
+     * 传递CallBack
+     *
+     * @param callback
+     * @return true send成功，false send失败
+     */
+    boolean doSend(T callback);
 
 }

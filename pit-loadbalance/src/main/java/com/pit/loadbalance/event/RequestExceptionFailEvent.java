@@ -9,12 +9,12 @@ import lombok.Data;
  */
 @Data
 public class RequestExceptionFailEvent {
-	private RequestDetail target;
+    private RequestDetail target;
 
-	private Exception failException;
+    private Exception failException;
 
-	public RequestExceptionFailEvent(RequestDetail target, Exception failException) {
-		this.target = target;
-		this.failException = failException;
-	}
+    public RequestExceptionFailEvent(RequestDetail target, Exception failException) {
+        this.target = target;
+        this.failException = failException;
+    }
 }

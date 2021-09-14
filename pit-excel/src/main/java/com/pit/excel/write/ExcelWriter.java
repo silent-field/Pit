@@ -18,25 +18,25 @@ import java.util.List;
  * @date 2020/3/17
  */
 public class ExcelWriter {
-	private static Logger logger = LoggerFactory.getLogger(ExcelWriter.class);
+    private static Logger logger = LoggerFactory.getLogger(ExcelWriter.class);
 
-	public static void write(String targetFilePath, List<ExcelWriterOperator> operators) {
-		XSSFWorkbook workbook = new XSSFWorkbook();
+    public static void write(String targetFilePath, List<ExcelWriterOperator> operators) {
+        XSSFWorkbook workbook = new XSSFWorkbook();
 
-		try {
-			for (int i = 0; i < operators.size(); i++) {
-				ExcelWriterOperator operator = operators.get(i);
-				operator.fillSheet(workbook);
-				operator.finish();
-			}
-			File xlsxFile = new File(targetFilePath);
-			workbook.write(new FileOutputStream(xlsxFile));
-		} catch (FileNotFoundException e) {
-			logger.error("ExcelWriter write FileNotFoundException", e);
-		} catch (IOException e) {
-			logger.error("ExcelWriter write IOException", e);
-		} finally {
-			IOUtils.closeQuietly(workbook);
-		}
-	}
+        try {
+            for (int i = 0; i < operators.size(); i++) {
+                ExcelWriterOperator operator = operators.get(i);
+                operator.fillSheet(workbook);
+                operator.finish();
+            }
+            File xlsxFile = new File(targetFilePath);
+            workbook.write(new FileOutputStream(xlsxFile));
+        } catch (FileNotFoundException e) {
+            logger.error("ExcelWriter write FileNotFoundException", e);
+        } catch (IOException e) {
+            logger.error("ExcelWriter write IOException", e);
+        } finally {
+            IOUtils.closeQuietly(workbook);
+        }
+    }
 }

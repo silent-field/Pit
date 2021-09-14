@@ -26,6 +26,34 @@ public class LogService implements ILogService {
         this.logDicHelper = logDicHelper;
     }
 
+    private static String obj2Str(Object income) {
+        if (null == income) {
+            return "<null>";
+        }
+
+        String className = income.getClass().getName();
+
+        if (income instanceof Class) {
+            return ((Class) income).getName();
+        }
+
+        if (income instanceof String) {
+            return income.toString();
+        }
+
+        if (income instanceof Throwable) {
+            return ExceptionUtils.getStackTrace((Throwable) income);
+        }
+
+        String jsonStr = "";
+        try {
+            jsonStr = GsonUtils.toJson(income);
+        } catch (Exception e) {
+            jsonStr = income.toString();
+        }
+        return jsonStr;
+    }
+
     public void sendInfoLog(Object... objs) {
         if (!isNeedInfoLog()) {
             return;
@@ -193,41 +221,5 @@ public class LogService implements ILogService {
 
     public String objToStr(Object income) {
         return obj2Str(income);
-    }
-
-    private static String obj2Str(Object income) {
-        if (null == income) {
-            return "<null>";
-        }
-
-        String className = income.getClass().getName();
-
-        if (income instanceof Class) {
-            return ((Class) income).getName();
-        }
-
-        if (income instanceof String) {
-            return income.toString();
-        }
-
-        if (income instanceof Throwable) {
-            return ExceptionUtils.getStackTrace((Throwable) income);
-        }
-
-        String jsonStr = "";
-        try {
-            jsonStr = GsonUtils.toJson(income);
-        } catch (Exception e) {
-            jsonStr = income.toString();
-        }
-        return jsonStr;
-    }
-
-    public static void main(String[] args) {
-        try {
-            int x = 1 / 0;
-        } catch (Exception t) {
-            System.out.println(obj2Str(t));
-        }
     }
 }

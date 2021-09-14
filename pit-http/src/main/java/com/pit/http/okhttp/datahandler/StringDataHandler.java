@@ -11,8 +11,8 @@ import java.io.IOException;
  * @Date 2019-06-17 15:50
  */
 public class StringDataHandler implements DataHandler<String> {
-	@Override
-	public String handle(Response response) throws IOException {
-		return response.body().string();
-	}
+    @Override
+    public String handle(Response response) throws IOException {
+        return response.body().string();
+    }
 }

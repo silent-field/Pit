@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * @date 2020/3/20
  */
 public class UUIDUtils {
-	public static String getUUID() {
-		return new UUID(ThreadLocalRandom.current().nextLong(), ThreadLocalRandom.current().nextLong()).toString() + Thread.currentThread().getId();
-	}
+    public static String getUUID() {
+        return new UUID(ThreadLocalRandom.current().nextLong(), ThreadLocalRandom.current().nextLong()).toString() + Thread.currentThread().getId();
+    }
 }

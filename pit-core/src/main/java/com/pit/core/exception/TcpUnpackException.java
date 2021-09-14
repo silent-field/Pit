@@ -6,11 +6,11 @@ package com.pit.core.exception;
  * @date 2020/9/12.
  */
 public class TcpUnpackException extends CommonException {
-	public TcpUnpackException(int code, String str) {
-		super(code, str);
-	}
+    public TcpUnpackException(int code, String str) {
+        super(code, str);
+    }
 
-	public TcpUnpackException(ResultCodes.ResultCode resultCode) {
-		super(resultCode);
-	}
+    public TcpUnpackException(ResultCodes.ResultCode resultCode) {
+        super(resultCode);
+    }
 }

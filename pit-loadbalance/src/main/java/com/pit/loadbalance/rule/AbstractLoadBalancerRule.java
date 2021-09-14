@@ -22,13 +22,13 @@ public abstract class AbstractLoadBalancerRule implements IRule {
     }
 
     @Override
-    public void setLoadBalancer(ILoadBalancer loadBalancer) {
-        this.loadBalancer = loadBalancer;
+    public ILoadBalancer getLoadBalancer() {
+        return loadBalancer;
     }
 
     @Override
-    public ILoadBalancer getLoadBalancer() {
-        return loadBalancer;
+    public void setLoadBalancer(ILoadBalancer loadBalancer) {
+        this.loadBalancer = loadBalancer;
     }
 
     @Override

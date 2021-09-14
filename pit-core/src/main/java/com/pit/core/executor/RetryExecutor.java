@@ -7,11 +7,11 @@ package com.pit.core.executor;
  * @date 2020/3/20
  */
 public interface RetryExecutor<T, R> {
-	/**
-	 * 执行操作
-	 *
-	 * @param resource
-	 * @return
-	 */
-	public T exec(R resource);
+    /**
+     * 执行操作
+     *
+     * @param resource
+     * @return
+     */
+    public T exec(R resource);
 }

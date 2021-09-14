@@ -10,13 +10,13 @@ import org.apache.poi.ss.usermodel.Row;
  * @date 2020/3/23
  */
 public class EmptyExcelReaderOperator extends ExcelReaderOperator {
-	@Override
-	protected Object convertRow(Row row) {
-		return "";
-	}
+    @Override
+    protected Object convertRow(Row row) {
+        return "";
+    }
 
-	@Override
-	protected int headRowNum() {
-		return 0;
-	}
+    @Override
+    protected int headRowNum() {
+        return 0;
+    }
 }
