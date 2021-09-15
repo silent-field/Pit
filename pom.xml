@@ -20,6 +20,7 @@
         <module>pit-consul</module>
         <module>pit-redis</module>
         <module>pit-service-orchestration</module>
+        <module>pit-web</module>
     </modules>
 
     <properties>
@@ -59,6 +60,7 @@
         <aspectjweaver.version>1.9.7</aspectjweaver.version>
         <aspectjrt.version>1.9.7</aspectjrt.version>
         <snakeyaml.version>1.29</snakeyaml.version>
+        <spring-boot.version>2.5.4</spring-boot.version>
     </properties>
 
     <dependencyManagement>
@@ -333,6 +335,12 @@
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjrt</artifactId>
                 <version>${aspectjrt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring-boot.version}</version>
             </dependency>
             <!-- spring end -->
         </dependencies>
