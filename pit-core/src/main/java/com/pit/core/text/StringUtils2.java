@@ -1,9 +1,11 @@
 package com.pit.core.text;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.helpers.MessageFormatter;
 
 import java.nio.charset.Charset;
+import java.util.Map;
 
 /**
  * 补充String常用方法
@@ -118,4 +120,20 @@ public class StringUtils2 {
             return str.toString().startsWith(prefix.toString());
         }
     }
+
+    /**
+     * 对字符串中${}标识的变量进行替换<br>
+     * 例如
+     * StringUtils2.substitute("hello ${animal} ,i am ${target}.", ImmutableMap.of("animal","monkey","target","nobody"))
+     * 输出 hello monkey ,i am nobody.
+     * @param content
+     * @param map
+     * @return
+     */
+    public static String substitute(String content, Map<String, ?> map) {
+        StringSubstitutor sub = new StringSubstitutor(map);
+        return sub.replace(content);
+    }
+
+
 }

@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
  * 临界问题说明：
  * 假设QPS限流100。第1秒的后500ms内有100个请求，第2秒的前500ms有100个请求，那么在500ms-1500ms这1秒内其实最大QPS为200
  */
-public class SimpleCountLimit {
+public class CountLimiter {
     private final Object lock = new Object();
     /**
      * 起始点
@@ -34,14 +34,14 @@ public class SimpleCountLimit {
      * @param period   时间间隔
      * @param timeUnit 间隔类型
      */
-    public SimpleCountLimit(int limit, int period, TimeUnit timeUnit) {
+    public CountLimiter(int limit, int period, TimeUnit timeUnit) {
         this.startPoint = System.currentTimeMillis();
         this.period = timeUnit.toMillis(period);
         this.limit = limit;
     }
 
     public static void main(String[] args) throws Exception {
-        SimpleCountLimit logLimit = new SimpleCountLimit(1, 30, TimeUnit.SECONDS);
+        CountLimiter logLimit = new CountLimiter(1, 30, TimeUnit.SECONDS);
 
         for (int i = 0; i < 100; i++) {
             boolean re = logLimit.grant();

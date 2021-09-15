@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  * 临界问题说明：
  * 假设QPS限流100。第1秒的后500ms内有100个请求，第2秒的前500ms有100个请求，那么在500ms-1500ms这1秒内其实最大QPS为200
  */
-public class SlideWindowLimit {
+public class SlideWindowLimiter {
     private final Object lock = new Object();
     /**
      * 接受请求窗口
@@ -35,7 +35,7 @@ public class SlideWindowLimit {
      * @param period   时间间隔
      * @param timeUnit 间隔类型
      */
-    public SlideWindowLimit(int limit, int period, TimeUnit timeUnit) {
+    public SlideWindowLimiter(int limit, int period, TimeUnit timeUnit) {
         if (limit < 0) {
             throw new IllegalArgumentException("Illegal limit Capacity: " + limit);
         }

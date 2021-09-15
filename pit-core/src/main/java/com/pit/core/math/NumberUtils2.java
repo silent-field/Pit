@@ -20,7 +20,55 @@ public class NumberUtils2 {
         }
 
         for (Number number : numbers) {
+            if (number == null) {
+                continue;
+            }
+
             if (number.longValue() <= 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * 是否存在非正数的整数，0或负数，并且不能存在null元素
+     *
+     * @param numbers
+     * @return
+     */
+    public static boolean isAnyNonPositiveStrict(Number... numbers) {
+        if (ArrayUtils.isEmpty(numbers)) {
+            return false;
+        }
+
+        for (Number number : numbers) {
+            if (number == null || number.longValue() <= 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * 是否存在负数，并且不能存在null元素
+     *
+     * @param numbers
+     * @return
+     */
+    public static boolean isAnyNegative(Number... numbers) {
+        if (ArrayUtils.isEmpty(numbers)) {
+            return false;
+        }
+
+        for (Number number : numbers) {
+            if (number == null) {
+                continue;
+            }
+
+            if (number.longValue() < 0) {
                 return true;
             }
         }
@@ -34,13 +82,13 @@ public class NumberUtils2 {
      * @param numbers
      * @return
      */
-    public static boolean isAnyNegative(Number... numbers) {
+    public static boolean isAnyNegativeStrict(Number... numbers) {
         if (ArrayUtils.isEmpty(numbers)) {
             return false;
         }
 
         for (Number number : numbers) {
-            if (number.longValue() < 0) {
+            if (number == null || number.longValue() < 0) {
                 return true;
             }
         }

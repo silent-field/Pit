@@ -113,9 +113,9 @@ public class AESUtil {
     /**
      * 生成AES密钥,可选长度为128,192,256位.
      */
-    public static byte[] generateAesKey(int keysize) throws GeneralSecurityException {
+    public static byte[] generateAesKey(int keySize) throws GeneralSecurityException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(AES_ALG);
-        keyGenerator.init(keysize);
+        keyGenerator.init(keySize);
         SecretKey secretKey = keyGenerator.generateKey();
         return secretKey.getEncoded();
     }

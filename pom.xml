@@ -58,6 +58,7 @@
         <spring-data-commons.version>2.5.4</spring-data-commons.version>
         <aspectjweaver.version>1.9.7</aspectjweaver.version>
         <aspectjrt.version>1.9.7</aspectjrt.version>
+        <snakeyaml.version>1.29</snakeyaml.version>
     </properties>
 
     <dependencyManagement>
@@ -113,6 +114,11 @@
                 <version>${commons-beanutils.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
+            </dependency>
             <!-- common end -->
 
             <!-- netty begin -->
