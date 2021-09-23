@@ -1,8 +1,7 @@
-package com.pit.redis;
+package com.pit.jedis;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -13,13 +12,13 @@ import redis.clients.jedis.JedisPoolConfig;
  * @date 2020/7/4.
  */
 @Builder
-@Getter
-@Setter
+@Data
 public class JedisConfig {
     private int maxTotal = 64;
     private int maxWaitMills = 2000;
     private int maxIdle = 32;
     private boolean testOnBorrow = false;
+    private boolean testOnReturn = false;
     private boolean blockWhenExhausted = false;
     private boolean lifo = false;
     private int minEvictableIdleTime = 1800000;
@@ -37,6 +36,10 @@ public class JedisConfig {
         jedisPoolConfig.setMaxIdle(maxIdle);
         // 在获取连接的时候检查有效性, 默认false
         jedisPoolConfig.setTestOnBorrow(testOnBorrow);
+        // 在返回连接的时候检查有效性, 默认false
+        jedisPoolConfig.setTestOnReturn(testOnReturn);
+        // 在空闲时检查有效性, 默认false
+        jedisPoolConfig.setTestWhileIdle(testWhileIdle);
         // 连接耗尽时是否阻塞, false报异常,true阻塞直到超时, 默认true
         jedisPoolConfig.setBlockWhenExhausted(blockWhenExhausted);
 
@@ -54,8 +57,6 @@ public class JedisConfig {
         jedisPoolConfig.setNumTestsPerEvictionRun(numTestsPerEvictionRun);
         // 对象空闲多久后逐出, 当空闲时间>该值 且 空闲连接>最大空闲数时直接逐出,不再根据MinEvictableIdleTimeMillis判断 (默认逐出策略)
         jedisPoolConfig.setSoftMinEvictableIdleTimeMillis(softMinEvictableIdleTimeMillis);
-        // 在空闲时检查有效性, 默认false
-        jedisPoolConfig.setTestWhileIdle(testWhileIdle);
         // 逐出扫描的时间间隔(毫秒) 如果为负数,则不运行逐出线程, 默认-1
         jedisPoolConfig.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
         return jedisPoolConfig;

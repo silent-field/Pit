@@ -22,32 +22,25 @@ import java.util.Set;
  */
 @Slf4j
 public class ConsulClient {
-
     private final static int minIdle = 2;
-    private static ConsulClient consulClient = new ConsulClient();
-    private static Consul consul;
+    private volatile Consul consul;
 
-    private ConsulClient() {
-        super();
-    }
-
-    public static ConsulClient instance(String consulAddress) {
+    public ConsulClient(String consulAddress) {
         if (null == consul) {
-            consulClient.init(consulAddress);
+            init(consulAddress);
         }
-
-        return consulClient;
     }
 
-    private synchronized void init(String consulAddress) {
+    private synchronized void init(String consulAddressStr) {
         if (null != consul) {
             return;
         }
+
         try {
             Builder builder = Consul.builder();
-            String[] consulAddrArr = consulAddress.split(",");
-            for (String consulAddr : consulAddrArr) {
-                builder.withHostAndPort(HostAndPort.fromString(consulAddr));
+            String[] consulAddressArr = consulAddressStr.split(",");
+            for (String consulAddress : consulAddressArr) {
+                builder.withHostAndPort(HostAndPort.fromString(consulAddress));
             }
             consul = builder.withPing(false).build();
         } catch (Exception e) {
@@ -84,5 +77,9 @@ public class ConsulClient {
         }
 
         return result;
+    }
+
+    public void destroy() {
+        consul.destroy();
     }
 }

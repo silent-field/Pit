@@ -1,8 +1,8 @@
-package com.pit.redis.lock;
+package com.pit.jedis.lock;
 
 import com.pit.core.net.LocalIpHolder;
 import com.pit.core.time.CachingSystemTimer2;
-import com.pit.redis.RedisClient;
+import com.pit.jedis.RedisClient;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 

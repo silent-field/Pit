@@ -1,4 +1,4 @@
-package com.pit.redis.lock;
+package com.pit.jedis.lock;
 
 /**
  * redis 锁 回调函数

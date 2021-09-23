@@ -1,12 +1,12 @@
-package com.pit.redis.consul;
+package com.pit.jedis.consul;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.pit.consul.ConsulClient;
-import com.pit.redis.JedisPoolContainer;
-import com.pit.redis.RedisEntry;
+import com.pit.jedis.JedisPoolContainer;
+import com.pit.jedis.RedisEntry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -31,31 +32,36 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class ConsulJedisPoolContainer implements JedisPoolContainer {
     /**
-     * 需要reset计数器的值
+     * 计数器，用于选择jedis实例，需要reset计数器的值
      */
-    private final static AtomicInteger addCounter = new AtomicInteger(0);
+    private final static AtomicInteger counter = new AtomicInteger(0);
+
     private final static int INCR_UPPER_LIMIT = 1000000000;
 
-    private static volatile boolean isInit = false;
+    private static AtomicBoolean isInit = new AtomicBoolean(false);
 
     private static List<RedisEntry> jedisPoolList = new LinkedList<>();
+
     /**
-     * Redis ip 实例错误计数器，10分钟刷新
+     * Redis(consul) ip 实例错误计数器，10分钟刷新
      */
-    private static LoadingCache<String, AtomicInteger> errorAddrCounter = CacheBuilder.newBuilder()
-            .expireAfterWrite(10, TimeUnit.MINUTES).maximumSize(100).concurrencyLevel(32).initialCapacity(8)
+    private static LoadingCache<String, AtomicInteger> errorAddressCounter = CacheBuilder.newBuilder()
+            .expireAfterWrite(10, TimeUnit.MINUTES).maximumSize(100).concurrencyLevel(8).initialCapacity(8)
             .build(new CacheLoader<String, AtomicInteger>() {
                 @Override
                 public AtomicInteger load(String key) {
                     return new AtomicInteger(0);
                 }
             });
+
     /**
      * 1小时内被移除的Redis ip 实例
      */
-    private static Cache<String, Boolean> removeAddr = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.HOURS)
-            .maximumSize(100).concurrencyLevel(32).initialCapacity(8).build();
+    private static Cache<String, Boolean> removeAddress = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.HOURS)
+            .maximumSize(100).concurrencyLevel(8).initialCapacity(8).build();
+
     private String consulHosts;
+    private ConsulClient consulClient;
     private String consulRedisName;
     private String password;
     private int timeout;
@@ -75,9 +81,13 @@ public class ConsulJedisPoolContainer implements JedisPoolContainer {
 
     public JedisPool getJedisPool() {
         for (int i = 0; i < 3; i++) {
-            int index = addCounter.incrementAndGet();
+            if (jedisPoolList.size() == 1) {
+                return jedisPoolList.get(0).getJedisPool();
+            }
+
+            int index = counter.incrementAndGet();
             if (index > INCR_UPPER_LIMIT) {
-                addCounter.set(0);
+                counter.set(0);
             }
             index = index % jedisPoolList.size();
             RedisEntry entry = jedisPoolList.get(index);
@@ -96,7 +106,7 @@ public class ConsulJedisPoolContainer implements JedisPoolContainer {
 
     @Override
     public Jedis getClient() {
-        if (!isInit) {
+        if (!isInit.get()) {
             init();
         }
         return getJedisPool().getResource();
@@ -112,12 +122,12 @@ public class ConsulJedisPoolContainer implements JedisPoolContainer {
         String key = host + ":" + port;
         final int max = errorMaxTimes;
         try {
-            int error = errorAddrCounter.get(key).incrementAndGet();
+            int error = errorAddressCounter.get(key).incrementAndGet();
             if (error >= max) {
                 broken(key);
             }
         } catch (Exception e) {
-            log.error("redis errAddr get fail");
+            log.error("redis broken instance fail.", e);
         }
     }
 
@@ -133,7 +143,7 @@ public class ConsulJedisPoolContainer implements JedisPoolContainer {
         // 查找要remove的entry
         RedisEntry removeEntry = null;
         for (RedisEntry entry : jedisPoolList) {
-            if (key.equals(entry.getAddr())) {
+            if (key.equals(entry.getAddress())) {
                 removeEntry = entry;
                 break;
             }
@@ -147,28 +157,29 @@ public class ConsulJedisPoolContainer implements JedisPoolContainer {
         // 执行remove
         log.warn("consul redis removing, key {}", key);
         jedisPoolList.remove(removeEntry);
-        removeAddr.put(key, true);
-        errorAddrCounter.refresh(key);
+        removeAddress.put(key, true);
+        errorAddressCounter.refresh(key);
         try {
             removeEntry.getJedisPool().close();
         } catch (Exception e) {
             log.error("closing jedis pool error:", key, e);
         }
         // 查找所有redis的节点
-        ConsulClient c = ConsulClient.instance(consulHosts);
-        Set<String> servers = c.serviceGet(consulRedisName);
+        Set<String> servers = consulClient.serviceGet(consulRedisName);
         OUTER:
         for (String server : servers) {
-            // 如果removeAddr上有则不要
-            if (null != removeAddr.getIfPresent(server) && removeAddr.getIfPresent(server)) {
+            // 如果removeAddress上有则不再添加
+            if (null != removeAddress.getIfPresent(server) && removeAddress.getIfPresent(server)) {
                 continue;
             }
-            // 如果现在有也不要
+
+            // 如果现在有不重复添加
             for (RedisEntry entry : jedisPoolList) {
-                if (server.equals(entry.getAddr())) {
+                if (server.equals(entry.getAddress())) {
                     continue OUTER;
                 }
             }
+
             // 初始化redis
             try {
                 initRedis(server);
@@ -180,17 +191,16 @@ public class ConsulJedisPoolContainer implements JedisPoolContainer {
     }
 
     private synchronized void init() {
-        if (isInit) {
-            return;
-        }
-        for (String ipAndPortStr : getRedisServers()) {
-            try {
-                initRedis(ipAndPortStr);
-            } catch (Exception e) {
-                log.error("init redis error:", ipAndPortStr, e);
+        if (isInit.compareAndSet(false, true)) {
+            consulClient = new ConsulClient(consulHosts);
+            for (String ipAndPortStr : getRedisServers()) {
+                try {
+                    initRedis(ipAndPortStr);
+                } catch (Exception e) {
+                    log.error("init redis error:", ipAndPortStr, e);
+                }
             }
         }
-        isInit = true;
     }
 
     /**
@@ -219,9 +229,7 @@ public class ConsulJedisPoolContainer implements JedisPoolContainer {
      * @return
      */
     private String[] getRedisServers() {
-
-        ConsulClient c = ConsulClient.instance(consulHosts);
-        Set<String> servers = c.serviceGet(consulRedisName);
+        Set<String> servers = consulClient.serviceGet(consulRedisName);
         int max = consulRedisMaxSize;
         List<String> serverList = new ArrayList<>(max);
         if (servers.size() > 3 * max) {

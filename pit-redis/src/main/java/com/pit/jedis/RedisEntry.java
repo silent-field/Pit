@@ -1,4 +1,4 @@
-package com.pit.redis;
+package com.pit.jedis;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,8 +13,7 @@ import redis.clients.jedis.JedisPool;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RedisEntry {
-
-    private String addr;
+    private String address;
 
     private JedisPool jedisPool;
 

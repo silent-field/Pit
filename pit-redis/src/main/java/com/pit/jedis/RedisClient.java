@@ -1,4 +1,4 @@
-package com.pit.redis;
+package com.pit.jedis;
 
 import com.pit.core.executor.RetryExecutor;
 import com.pit.core.math.NumberUtils2;
