@@ -129,10 +129,6 @@ public class RedisLock {
      * @param timeout 超时时间px
      */
     public void unlock(String key, long begin, long timeout) {
-        // 是自己才解锁
-//		if (LocalIpHolder.getInstanceId().equals(redisClient.get(key))) {
-//			return;
-//		}
         // 未超时才解锁
         if (CachingSystemTimer2.getNow() - begin < timeout) {
             redisClient.del(key);
