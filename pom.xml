@@ -22,6 +22,7 @@
         <module>pit-service-orchestration</module>
         <module>pit-web</module>
         <module>pit-rocketmq</module>
+        <module>pit-dag</module>
     </modules>
 
     <properties>

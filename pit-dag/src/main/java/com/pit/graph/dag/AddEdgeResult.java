@@ -1,4 +1,4 @@
-package com.pit.core.graph.dag;
+package com.pit.graph.dag;
 
 import com.pit.core.dict.Dict;
 

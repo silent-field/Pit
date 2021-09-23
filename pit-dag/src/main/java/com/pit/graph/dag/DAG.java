@@ -1,4 +1,4 @@
-package com.pit.core.graph.dag;
+package com.pit.graph.dag;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
