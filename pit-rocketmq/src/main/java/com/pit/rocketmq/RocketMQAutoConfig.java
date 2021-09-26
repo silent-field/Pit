@@ -1,7 +1,8 @@
-package com.pit.rocketmq.config;
+package com.pit.rocketmq;
 
 import com.pit.rocketmq.RocketMQRunner;
 import com.pit.rocketmq.RocketMQStopListener;
+import com.pit.rocketmq.config.RocketMQProperties;
 import com.pit.rocketmq.factory.RocketMQFactory;
 import com.pit.rocketmq.listener.IRocketMQMsgHandler;
 import lombok.extern.slf4j.Slf4j;
