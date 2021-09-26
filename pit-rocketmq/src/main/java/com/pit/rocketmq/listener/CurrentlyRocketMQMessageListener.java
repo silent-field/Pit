@@ -1,6 +1,6 @@
 package com.pit.rocketmq.listener;
 
-import lombok.Getter;
+import com.pit.rocketmq.consumer.DefaultRocketMQConsumer;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
@@ -23,11 +23,15 @@ public class CurrentlyRocketMQMessageListener implements MessageListenerConcurre
     @Setter
     private List<IRocketMQMsgHandler> handlers;
 
-    @Getter
-    private MessageExt newest;
+    private DefaultRocketMQConsumer consumer;
+
+    public CurrentlyRocketMQMessageListener(DefaultRocketMQConsumer consumer) {
+        this.consumer = consumer;
+    }
 
     @Override
     public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> list, ConsumeConcurrentlyContext consumeConcurrentlyContext) {
+        MessageExt newest = null;
         for (MessageExt messageExt : list) {
             newest = messageExt;
 
@@ -41,6 +45,7 @@ public class CurrentlyRocketMQMessageListener implements MessageListenerConcurre
                 }
             }
         }
+        consumer.setNewest(newest);
         return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
     }
 }

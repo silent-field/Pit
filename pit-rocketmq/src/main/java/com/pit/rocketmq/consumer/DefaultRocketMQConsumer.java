@@ -1,6 +1,8 @@
 package com.pit.rocketmq.consumer;
 
 import com.pit.rocketmq.config.ConsumerConfig;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.consumer.AllocateMessageQueueStrategy;
@@ -10,6 +12,7 @@ import org.apache.rocketmq.client.consumer.listener.MessageListenerOrderly;
 import org.apache.rocketmq.client.consumer.rebalance.AllocateMessageQueueAveragelyByCircle;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
+import org.apache.rocketmq.common.message.MessageExt;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Map;
@@ -26,6 +29,10 @@ public class DefaultRocketMQConsumer {
     private String groupName;
     private DefaultMQPushConsumer consumer;
     private ConsumerConfig config;
+
+    @Getter
+    @Setter
+    private MessageExt newest;
 
     /**
      * 初始化配置文件里面的各种消费者属性配置
@@ -83,7 +90,7 @@ public class DefaultRocketMQConsumer {
             String consumeFromWhere = config.getConsumeFromWhere();
             if (StringUtils.isNotBlank(consumeFromWhere)) {
                 if (StringUtils.equals(consumeFromWhere, "CONSUME_FROM_LAST_OFFSET")) {
-                   consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
+                    consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
                 } else if (StringUtils.equals(consumeFromWhere, "CONSUME_FROM_FIRST_OFFSET")) {
                     consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
                 } else if (StringUtils.equals(consumeFromWhere, "CONSUME_FROM_TIMESTAMP")) {
@@ -138,11 +145,11 @@ public class DefaultRocketMQConsumer {
         }
     }
 
-    public void registerMessageListener(MessageListenerOrderly listener){
+    public void registerMessageListener(MessageListenerOrderly listener) {
         consumer.registerMessageListener(listener);
     }
 
-    public void registerMessageListener(MessageListenerConcurrently listener){
+    public void registerMessageListener(MessageListenerConcurrently listener) {
         consumer.registerMessageListener(listener);
     }
 

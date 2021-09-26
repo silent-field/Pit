@@ -1,6 +1,6 @@
 package com.pit.rocketmq.listener;
 
-import lombok.Getter;
+import com.pit.rocketmq.consumer.DefaultRocketMQConsumer;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.listener.ConsumeOrderlyContext;
@@ -20,11 +20,15 @@ public class OrderlyRocketMQMessageListener implements MessageListenerOrderly {
     @Setter
     private List<IRocketMQMsgHandler> handlers;
 
-    @Getter
-    private MessageExt newest;
+    private DefaultRocketMQConsumer consumer;
+
+    public OrderlyRocketMQMessageListener(DefaultRocketMQConsumer consumer) {
+        this.consumer = consumer;
+    }
 
     @Override
     public ConsumeOrderlyStatus consumeMessage(List<MessageExt> list, ConsumeOrderlyContext consumeOrderlyContext) {
+        MessageExt newest = null;
         for (MessageExt messageExt : list) {
             newest = messageExt;
             // 可以用多个handler去做同一个messageExt的业务处理
@@ -38,6 +42,7 @@ public class OrderlyRocketMQMessageListener implements MessageListenerOrderly {
                 }
             }
         }
+        consumer.setNewest(newest);
         return ConsumeOrderlyStatus.SUCCESS;
     }
 }

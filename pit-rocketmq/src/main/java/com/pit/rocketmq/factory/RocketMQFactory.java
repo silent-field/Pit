@@ -7,9 +7,11 @@ import com.pit.rocketmq.listener.CurrentlyRocketMQMessageListener;
 import com.pit.rocketmq.listener.IRocketMQMsgHandler;
 import com.pit.rocketmq.listener.OrderlyRocketMQMessageListener;
 import com.pit.rocketmq.producer.DefaultRocketMQProducer;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQClientException;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,12 +23,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 public class RocketMQFactory {
-    /**
-     * 用于存放已经存在的消费者map组,用concurrentHashMap保证并发性
-     */
-    private volatile Map<String, DefaultRocketMQConsumer> consumers = new ConcurrentHashMap<>();
+    @Getter
+    private volatile Map<String, DefaultRocketMQConsumer> consumers = new HashMap<>();
 
-    private volatile Map<String, DefaultRocketMQProducer> producers = new ConcurrentHashMap<>();
+    @Getter
+    private volatile Map<String, DefaultRocketMQProducer> producers = new HashMap<>();
 
     /**
      * 创建一个生产者
@@ -64,12 +65,12 @@ public class RocketMQFactory {
             //设置消费者回调类型
             if (config.isOrderly()) {
                 //顺序消费类型
-                OrderlyRocketMQMessageListener orderlyRocketMqMessageListener = new OrderlyRocketMQMessageListener();
+                OrderlyRocketMQMessageListener orderlyRocketMqMessageListener = new OrderlyRocketMQMessageListener(consumer);
                 orderlyRocketMqMessageListener.setHandlers(list);
                 consumer.registerMessageListener(orderlyRocketMqMessageListener);
             } else {
                 //并发乱序消费类型
-                CurrentlyRocketMQMessageListener currentlyRocketMqMessageListener = new CurrentlyRocketMQMessageListener();
+                CurrentlyRocketMQMessageListener currentlyRocketMqMessageListener = new CurrentlyRocketMQMessageListener(consumer);
                 currentlyRocketMqMessageListener.setHandlers(list);
                 consumer.registerMessageListener(currentlyRocketMqMessageListener);
             }
