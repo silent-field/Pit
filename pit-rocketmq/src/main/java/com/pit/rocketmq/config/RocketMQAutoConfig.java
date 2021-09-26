@@ -34,7 +34,7 @@ import java.util.Map;
 @ConditionalOnClass(RocketMQFactory.class)
 @EnableConfigurationProperties({RocketMQProperties.class})
 @Slf4j
-public class RocketMqAutoConfig implements ApplicationContextAware {
+public class RocketMQAutoConfig implements ApplicationContextAware {
     @Autowired
     private RocketMQProperties rocketMQProperties;
 
