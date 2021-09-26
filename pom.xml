@@ -24,6 +24,7 @@
         <module>pit-rocketmq</module>
         <module>pit-dag</module>
         <module>pit-statemachine</module>
+        <module>pit-kafka</module>
     </modules>
 
     <properties>
