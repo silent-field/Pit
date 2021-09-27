@@ -8,9 +8,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.common.TopicPartition;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -75,12 +78,19 @@ public class DefaultKafkaConsumer implements Runnable {
         }
         consumerDesc = topicWithEnv + "@" + config.getTopic();
 
+        String offset = config.getOffset();
+        if (!StringUtils.isBlank(offset)) {
+            props.put("auto.offset.reset", offset);
+        }
+
+        props.put("enable.auto.commit", config.isAutoCommit());
+        props.put("auto.commit.interval.ms", "10000");
+        props.put("max.poll.records", 100);
+
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 
-        props.put("enable.auto.commit", "true");
-        props.put("auto.commit.interval.ms", "10000");
-        props.put("max.poll.records", 100);
+
 
         consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Collections.singletonList(topicWithEnv));
@@ -136,21 +146,32 @@ public class DefaultKafkaConsumer implements Runnable {
                     // 1000ms内等待Kafka broker返回数据.不管有没有可用的数据都要返回
                     ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000L));
 
-                    for (ConsumerRecord<String, String> record : records) {
-                        MessageEvent messageEvent = new MessageEvent(record.value());
-                        messageEvent.putHeader(MessageEvent.TIMESTAMP, String.valueOf(System.currentTimeMillis()));
-                        messageEvent.putHeader(MessageEvent.TOPIC, topicWithEnv);
-                        messageEvent.putHeader(MessageEvent.PARTITION, record.partition());
-                        messageEvent.putHeader(MessageEvent.OFFSET, record.offset());
-                        if (record.key() != null) {
-                            messageEvent.putHeader(MessageEvent.KEY, record.key());
+                    ConsumerRecord<String, String> newest = null;
+                    for (TopicPartition partition : records.partitions()) {
+                        List<ConsumerRecord<String, String>> partitionRecords = records.records(partition);
+                        for (ConsumerRecord<String, String> record : partitionRecords) {
+                            MessageEvent messageEvent = new MessageEvent(record.value());
+                            messageEvent.putHeader(MessageEvent.TIMESTAMP, String.valueOf(System.currentTimeMillis()));
+                            messageEvent.putHeader(MessageEvent.TOPIC, topicWithEnv);
+                            messageEvent.putHeader(MessageEvent.PARTITION, record.partition());
+                            messageEvent.putHeader(MessageEvent.OFFSET, record.offset());
+                            if (record.key() != null) {
+                                messageEvent.putHeader(MessageEvent.KEY, record.key());
+                            }
+                            CompletableFuture.runAsync(() -> {
+                                messageConsumer.consume(messageEvent);
+                            }, consumeThreadPoolExecutor).exceptionally(ex -> {
+                                log.error(consumerDesc + " Kafka consume EXCEPTION", ex);
+                                return null;
+                            });
+                            newest = record;
                         }
-                        CompletableFuture.runAsync(() -> {
-                            messageConsumer.consume(messageEvent);
-                        }, consumeThreadPoolExecutor).exceptionally(ex -> {
-                            log.error(consumerDesc + " Kafka consume EXCEPTION", ex);
-                            return null;
-                        });
+
+                        if (!config.isAutoCommit() && newest != null) {
+                            // commit the read transactions to Kafka to avoid duplicates
+                            consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(newest.offset() + 1)));
+                            newest = null;
+                        }
                     }
                 } catch (Exception e) {
                     log.error(consumerDesc + " Kafka consume EXCEPTION ", e);
