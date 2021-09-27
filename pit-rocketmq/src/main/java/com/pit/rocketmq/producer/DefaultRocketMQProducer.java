@@ -72,11 +72,15 @@ public class DefaultRocketMQProducer {
     }
 
     public void start() throws MQClientException {
-        producer.start();
+        if (producer != null) {
+            producer.start();
+        }
     }
 
     public void shutdown() {
-        producer.shutdown();
+        if (producer != null) {
+            producer.shutdown();
+        }
     }
 
     // ------------- send sync

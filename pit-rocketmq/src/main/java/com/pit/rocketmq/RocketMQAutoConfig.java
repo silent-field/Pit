@@ -39,10 +39,7 @@ public class RocketMQAutoConfig implements ApplicationContextAware {
     @Autowired
     private RocketMQProperties rocketMQProperties;
 
-    @Value("spring.application.name:")
-    private String appName;
-
-    @Value("application.profile:")
+    @Value("spring.profiles.active:")
     private String env;
 
     private ApplicationContext applicationContext;

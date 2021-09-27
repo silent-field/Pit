@@ -69,6 +69,7 @@
         <google-cloud-translate.version>2.1.1</google-cloud-translate.version>
         <spring-expression.version>5.3.10</spring-expression.version>
         <rocketmq-client.version>4.9.1</rocketmq-client.version>
+        <kafka-clients.version>2.8.1</kafka-clients.version>
     </properties>
 
     <dependencyManagement>
@@ -382,6 +383,13 @@
                 <groupId>org.apache.rocketmq</groupId>
                 <artifactId>rocketmq-client</artifactId>
                 <version>${rocketmq-client.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients -->
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>${kafka-clients.version}</version>
             </dependency>
             <!-- mq end -->
         </dependencies>
