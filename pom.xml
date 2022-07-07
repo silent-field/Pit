@@ -67,7 +67,7 @@
         <snakeyaml.version>1.29</snakeyaml.version>
         <spring-boot.version>2.5.4</spring-boot.version>
         <google-cloud-translate.version>2.1.1</google-cloud-translate.version>
-        <spring-expression.version>5.3.10</spring-expression.version>
+        <spring-expression.version>5.3.16</spring-expression.version>
         <rocketmq-client.version>4.9.1</rocketmq-client.version>
         <kafka-clients.version>2.8.1</kafka-clients.version>
     </properties>
