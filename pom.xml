@@ -60,7 +60,7 @@
         <consul-client.version>1.5.3</consul-client.version>
         <jedis.version>2.9.0</jedis.version>
         <redisson.version>3.13.5</redisson.version>
-        <spring.version>5.3.9</spring.version>
+        <spring.version>6.0.0</spring.version>
         <spring-data-commons.version>2.5.4</spring-data-commons.version>
         <aspectjweaver.version>1.9.7</aspectjweaver.version>
         <aspectjrt.version>1.9.7</aspectjrt.version>
