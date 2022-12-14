@@ -64,7 +64,7 @@
         <spring-data-commons.version>2.5.4</spring-data-commons.version>
         <aspectjweaver.version>1.9.7</aspectjweaver.version>
         <aspectjrt.version>1.9.7</aspectjrt.version>
-        <snakeyaml.version>1.29</snakeyaml.version>
+        <snakeyaml.version>1.32</snakeyaml.version>
         <spring-boot.version>2.5.4</spring-boot.version>
         <google-cloud-translate.version>2.1.1</google-cloud-translate.version>
         <spring-expression.version>5.3.10</spring-expression.version>
